@@ -8,11 +8,18 @@ export function error404 (req, res, next) {
 // handle errors
 export function errorHandler (err, req, res, next) {
   // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  if (req.app.get('env') === 'development') {
+    res.locals.error = err;
+    res.locals.message = err.message;
+    res.locals.status = err.status;
+    console.log(err);
+  }
 
   // render the error page
-  res.status(err.status || 500);
-  res.send({ error: err.status || 500 });
+  res.status(res.locals.status || 500);
+  res.send({ error: {
+    code: res.locals.status || 500,
+    info: res.locals.message
+  }});
 };
 

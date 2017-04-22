@@ -2,6 +2,8 @@ import express from 'express';
 import path from 'path';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
+import compression from 'compression';
+import mongoose from './services/mongoose';
 
 import config from './config';
 import api from './api';
@@ -9,7 +11,10 @@ import { error404, errorHandler } from './util/error';
 
 const app = express();
 
+mongoose.connect(config.mongo.uri);
+
 // middlewares
+app.use(compression());
 app.use(logger(config.logger));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

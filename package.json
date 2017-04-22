@@ -8,10 +8,16 @@
   },
   "dependencies": {
     "body-parser": "~1.17.1",
+    "compression": "^1.6.2",
     "debug": "~2.6.3",
+    "dotenv-safe": "^4.0.3",
     "express": "~4.15.2",
     "lodash": "^4.17.4",
-    "morgan": "~1.8.1"
+    "mongoose": "^4.9.5",
+    "morgan": "~1.8.1",
+    "moviedb": "^0.2.8",
+    "rarbg": "^0.4.4",
+    "rss": "^1.2.2"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

@@ -1,0 +1,21 @@
+{
+  "name": "tv-shows-rss",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon --exec babel-node ./bin/www",
+    "debug": "nodemon --exec babel-node ./bin/www --debug"
+  },
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "lodash": "^4.17.4",
+    "morgan": "~1.8.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-latest": "^6.24.1",
+    "nodemon": "^1.11.0"
+  }
+}

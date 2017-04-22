@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "start": "nodemon --exec babel-node ./bin/www",
-    "debug": "nodemon --exec babel-node ./bin/www --debug"
+    "debug": "nodemon --exec babel-node ./bin/www --debug",
+    "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts || exit 0 || true",
+    "build": "babel src -d dist",
+    "serve": "node dist/app.js"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
@@ -21,7 +24,13 @@
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
     "babel-preset-latest": "^6.24.1",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.9.0",
     "nodemon": "^1.11.0"
   }
 }

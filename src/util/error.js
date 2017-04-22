@@ -1,12 +1,12 @@
 // catch 404 and forward to error handler
-export function error404 (req, res, next) {
-  var err = new Error('Not Found');
+export function error404(req, res, next) {
+  const err = new Error('Not Found');
   err.status = 404;
   next(err);
-};
- 
+}
+
 // handle errors
-export function errorHandler (err, req, res, next) {
+export function errorHandler(err, req, res) {
   // set locals, only providing error in development
   if (req.app.get('env') === 'development') {
     res.locals.error = err;
@@ -19,7 +19,7 @@ export function errorHandler (err, req, res, next) {
   res.status(res.locals.status || 500);
   res.send({ error: {
     code: res.locals.status || 500,
-    info: res.locals.message
-  }});
-};
+    info: res.locals.message,
+  } });
+}
 

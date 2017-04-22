@@ -1,5 +1,5 @@
-import _ from 'lodash'
-import { Router } from 'express'
+import _ from 'lodash';
+import { Router } from 'express';
 
 const router = new Router();
 

@@ -1,5 +1,5 @@
 {
-  "name": "tv-shows-rss",
+  "name": "tv-show-rss-api",
   "version": "1.0.0",
   "private": true,
   "scripts": {

@@ -32,7 +32,7 @@ const config = {
   test: {
     logger: 'dev',
     mongo: {
-      uri: 'mongodb://localhost/rss-tv-shows-test',
+      uri: 'mongodb://localhost/rss-tv-show-test',
       options: {
         debug: false
       }

@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
+/* eslint-disable no-param-reassign */
+
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import rarbg from 'rarbg';
+import { padStart } from 'lodash';
+import omdb from './omdb';
 import TvShow from '../api/show/model';
 import mongoose from './mongoose';
 import config from '../config';
@@ -24,11 +28,21 @@ function log(text) {
   logFile.write(`[${Date()}] ${text}`);
 }
 
+function logResults() {
+  console.log(); // new line
+  updated.forEach((name) => {
+    const logMessage = `UPDATED: "${name}"${os.EOL}`;
+    console.log(logMessage);
+    log(logMessage);
+  });
+  logFile.close();
+}
+
 function updateTvShow(show) {
   return function setData(data) {
-    /* eslint-disable */
+    // Empties download links
     show.download = [];
-    /* eslint-enable */
+    // Push new links
     data.forEach(filteredObj => show.download.push(filteredObj));
     // Return save mongoose model promise
     return show.save();
@@ -39,12 +53,42 @@ function filterData(data) {
   return Promise.resolve(filter(data));
 }
 
-function searchNewLinks(show) {
+function retryWithLastSeason(show) {
+  const season = padStart(show.current_season - 1, 2, 0);
   return rarbg.search({
-    search_string: `${show.current_season} 1080p`,
+    search_string: `${season} 1080p`,
     search_imdb: show.imdbID,
     category: rarbg.categories.TV_HD_EPISODES,
     sort: 'seeders',
+  });
+}
+
+function searchNewLinks(show) {
+  return new Promise((resolve, reject) => {
+    const season = padStart(show.current_season, 2, 0);
+    rarbg.search({
+      search_string: `${season} 1080p`,
+      search_imdb: show.imdbID,
+      category: rarbg.categories.TV_HD_EPISODES,
+      sort: 'seeders',
+    })
+    .then(resolve)
+    .catch((err) => {
+      if (err.error === 'No results found') {
+        retryWithLastSeason(show).then(resolve).catch(reject);
+      }
+    });
+  });
+}
+
+function updateSeason(show) {
+  return new Promise((resolve, reject) => {
+    omdb.getSeason(show.imdbID)
+    .then((season) => {
+      show.current_season = season;
+      resolve(show);
+    })
+    .catch(reject);
   });
 }
 
@@ -55,7 +99,8 @@ function run(shows) {
   shows.forEach((show) => {
     // Creates a Promise for each Show
     const p = new Promise((resolve, reject) => {
-      searchNewLinks(show)
+      updateSeason(show)
+        .then(searchNewLinks)
         .then(filterData)
         .then(updateTvShow(show))
         .then(() => updated.push(show.name))
@@ -77,15 +122,7 @@ function run(shows) {
 
 TvShow.find({})
   .then(run)
-  .then(() => {
-    console.log(); // new line
-    updated.forEach((name) => {
-      const logMessage = `UPDATED: "${name}"${os.EOL}`;
-      console.log(logMessage);
-      log(logMessage);
-    });
-    logFile.close();
-  })
-  .then(process.exit)
-  .catch(err => console.log(err));
+  .then(logResults)
+  .catch(err => console.log(err))
+  .then(process.exit);
 

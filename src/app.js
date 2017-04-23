@@ -1,5 +1,4 @@
 import express from 'express';
-import logger from 'morgan';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import mongoose from './services/mongoose';
@@ -14,7 +13,7 @@ mongoose.connect(config.mongo.uri);
 
 // middlewares
 app.use(compression());
-app.use(logger(config.logger));
+app.use(config.logger());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 

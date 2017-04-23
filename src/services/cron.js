@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import rarbg from 'rarbg';
 import TvShow from '../api/show/model';
 import mongoose from './mongoose';
@@ -8,8 +11,18 @@ import filter from '../util/download';
 
 mongoose.connect(config.mongo.uri);
 
+const logDir = path.join(__dirname, '../../log/cron.log');
+if (!fs.existsSync(path.dirname(logDir))) {
+  fs.mkdirSync(path.dirname(logDir));
+}
+const logFile = fs.createWriteStream(logDir, { flags: 'a' });
+
 // List of updated Tv Shows
 const updated = [];
+
+function log(text) {
+  logFile.write(`[${Date()}] ${text}`);
+}
 
 function updateTvShow(show) {
   return function setData(data) {
@@ -48,7 +61,9 @@ function run(shows) {
         .then(() => updated.push(show.name))
         .then(() => resolve())
         .catch((err) => {
-          console.log(err);
+          const logMessage = `FAILED: "${show.name}"${os.EOL}`;
+          console.log(logMessage, err);
+          log(logMessage);
           reject();
         });
     });
@@ -62,7 +77,15 @@ function run(shows) {
 
 TvShow.find({})
   .then(run)
-  .then(() => updated.map(name => console.log(`\n${name} updated.`)))
+  .then(() => {
+    console.log(); // new line
+    updated.forEach((name) => {
+      const logMessage = `UPDATED: "${name}"${os.EOL}`;
+      console.log(logMessage);
+      log(logMessage);
+    });
+    logFile.close();
+  })
   .then(process.exit)
   .catch(err => console.log(err));
 

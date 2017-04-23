@@ -4,6 +4,7 @@ public
 .tmp
 .idea
 .log
+compiled
 dist
 docs
 .env

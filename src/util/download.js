@@ -1,7 +1,6 @@
 export default function filter(data) {
   const regex = /S\d+E\d+/i;
   const episodes = [];
-
   return data
         .filter((obj) => {
           const [episode] = obj.filename.match(regex) || [];

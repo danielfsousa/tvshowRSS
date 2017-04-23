@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "nodemon --exec babel-node ./bin/www",
-    "debug": "nodemon --exec babel-node ./bin/www --debug",
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts || exit 0 || true",
+    "compile": "rm -rf .compiled && babel src --out-dir .compiled",
     "build": "babel src -d dist",
     "serve": "node dist/app.js"
   },

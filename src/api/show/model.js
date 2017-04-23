@@ -1,4 +1,5 @@
-import mongoose, { Schema } from 'mongoose';
+import { Schema } from 'mongoose';
+import mongoose from '../../services/mongoose';
 
 const showSchema = new Schema({
   imdbID: {

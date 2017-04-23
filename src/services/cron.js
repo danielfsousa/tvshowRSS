@@ -13,8 +13,10 @@ import mongoose from './mongoose';
 import config from '../config';
 import filter from '../util/download';
 
+// Connect to Database
 mongoose.connect(config.mongo.uri);
 
+// Create LOG File
 const logDir = path.join(__dirname, '../../log/cron.log');
 if (!fs.existsSync(path.dirname(logDir))) {
   fs.mkdirSync(path.dirname(logDir));
@@ -23,6 +25,10 @@ const logFile = fs.createWriteStream(logDir, { flags: 'a' });
 
 // List of updated Tv Shows
 const updated = [];
+
+function success(show) {
+  updated.push(show.name);
+}
 
 function log(text) {
   logFile.write(`[${Date()}] ${text}`);
@@ -38,7 +44,13 @@ function logResults() {
   logFile.close();
 }
 
-function updateTvShow(show) {
+function logError(err, show) {
+  const logMessage = `FAILED: "${show.name}"${os.EOL}`;
+  console.log(logMessage, err);
+  log(logMessage);
+}
+
+function update(show) {
   return function setData(data) {
     // Empties download links
     show.download = [];
@@ -54,30 +66,24 @@ function filterData(data) {
 }
 
 function retryWithLastSeason(show) {
-  const season = padStart(show.current_season - 1, 2, 0);
-  return rarbg.search({
-    search_string: `${season} 1080p`,
-    search_imdb: show.imdbID,
-    category: rarbg.categories.TV_HD_EPISODES,
-    sort: 'seeders',
-  });
-}
-
-function searchNewLinks(show) {
-  return new Promise((resolve, reject) => {
-    const season = padStart(show.current_season, 2, 0);
-    rarbg.search({
-      search_string: `${season} 1080p`,
+  return function returnData() {
+    const season = padStart(show.current_season - 1, 2, 0);
+    return rarbg.search({
+      search_string: `S${season} 1080p`,
       search_imdb: show.imdbID,
       category: rarbg.categories.TV_HD_EPISODES,
       sort: 'seeders',
-    })
-    .then(resolve)
-    .catch((err) => {
-      if (err.error === 'No results found') {
-        retryWithLastSeason(show).then(resolve).catch(reject);
-      }
     });
+  };
+}
+
+function getMagnets(show) {
+  const season = padStart(show.current_season, 2, 0);
+  return rarbg.search({
+    search_string: `S${season} 1080p`,
+    search_imdb: show.imdbID,
+    category: rarbg.categories.TV_HD_EPISODES,
+    sort: 'seeders',
   });
 }
 
@@ -100,15 +106,13 @@ function run(shows) {
     // Creates a Promise for each Show
     const p = new Promise((resolve, reject) => {
       updateSeason(show)
-        .then(searchNewLinks)
+        .then(getMagnets).catch(retryWithLastSeason(show))
         .then(filterData)
-        .then(updateTvShow(show))
-        .then(() => updated.push(show.name))
-        .then(() => resolve())
+        .then(update(show))
+        .then(success)
+        .then(resolve)
         .catch((err) => {
-          const logMessage = `FAILED: "${show.name}"${os.EOL}`;
-          console.log(logMessage, err);
-          log(logMessage);
+          logError(err, show);
           reject();
         });
     });
@@ -120,9 +124,10 @@ function run(shows) {
   return Promise.all(promises);
 }
 
+// ----------------------------------------------------- //
+
 TvShow.find({})
   .then(run)
   .then(logResults)
   .catch(err => console.log(err))
   .then(process.exit);
-

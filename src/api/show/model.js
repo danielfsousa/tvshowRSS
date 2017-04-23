@@ -12,7 +12,7 @@ const showSchema = new Schema({
     required: true,
   },
   current_season: Number,
-  download: [{
+  magnets: [{
     title: String,
     sd: String,
     _720p: String,

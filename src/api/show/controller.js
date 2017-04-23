@@ -1,7 +1,6 @@
-import rarbg from 'rarbg';
 import TvShow from './model';
 import Feed from '../../services/rss';
-import filter from '../../util/download';
+import { magnets, filter } from '../../util/download';
 
 function validate(req, res) {
   const message = {
@@ -16,7 +15,7 @@ function validate(req, res) {
   return res.status(message.error.code).json(message);
 }
 
-function sendMagnet(res, show) {
+function sendFeed(res, show) {
   const rss = new Feed(show).create();
   const xml = rss.xml({ indent: true });
   res.header('Content-Type', 'text/xml; charset=UTF-8');
@@ -24,36 +23,29 @@ function sendMagnet(res, show) {
 }
 
 function newTvShow(req, res, next) {
-  const imdbid = req.query.id;
-  const name = 'Mr. Robot';
-  const search = req.query.search;
-  const season = 2;
+  // search omdb
+  const show = new TvShow({
+    imdbID: req.query.id,
+    name: 'Mr. Robot',
+    season: 2,
+  });
 
-  rarbg.search({
-    search_string: search,
-    search_imdb: imdbid,
-    category: rarbg.categories.TV_HD_EPISODES,
-    sort: 'seeders',
-  })
-    .then(data => TvShow.create({
-      imdbID: imdbid,
-      name,
-      current_season: season, // preciso saber disso
-      download: filter(data),
-    }))
-    .then(show => sendMagnet(res, show))
+  magnets(show)
+    .then(filter)
+    .then(show.save)
+    .then(showObj => sendFeed(res, showObj))
     .catch(next);
 }
 
-function getById(req, res, next, id) {
-  TvShow.findOne({ imdbID: id })
-        .then(show => (show ? sendMagnet(res, show) : newTvShow(req, res, next)))
+function getById(req, res, next) {
+  TvShow.findOne({ imdbID: req.query.id })
+        .then(show => (show ? sendFeed(res, show) : newTvShow(req, res, next)))
         .catch(next);
 }
 
-function getByName(req, res, next, name) {
+function getByName(req, res, next) {
   // TODO
-  return name === true;
+  return req.query.name === true;
 }
 
 export default function getTvShowRSS(req, res, next) {
@@ -63,8 +55,8 @@ export default function getTvShowRSS(req, res, next) {
   const name = req.query.name;
 
   if (name) {
-    getByName(req, res, next, name);
+    getByName(req, res, next);
   } else if (id) {
-    getById(req, res, next, id);
+    getById(req, res, next);
   }
 }

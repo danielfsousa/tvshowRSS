@@ -1,11 +1,21 @@
-import _ from 'lodash';
+import { padStart, includes } from 'lodash';
 import RSS from 'rss';
 import { rss as defaults } from '../config';
 
+export const resolutions = {
+  SD: 'sd',
+  HD: '720p',
+  FULLHD: '1080p',
+};
+
 export default class Feed {
 
+  static get resolutions() {
+    return resolutions;
+  }
+
   constructor(tvShow) {
-    const fmtSeason = `Season: ${_.padStart(tvShow.current_season, 2, 0)}`;
+    const fmtSeason = `Season: ${padStart(tvShow.current_season, 2, 0)}`;
     this.tvShow = tvShow;
     this.config = {
       title: `${defaults.title}: ${tvShow.name}`,
@@ -15,21 +25,32 @@ export default class Feed {
     };
   }
 
-  create() {
+  create(videoResolution) {
+    let res = '';
+
+    // Check if resolution requested by the user is valid
+    if (includes(resolutions, videoResolution)) {
+      // Add an underscore if resolution beggins with a number
+      res = videoResolution.includes('p') ? `_${videoResolution}` : videoResolution;
+    } else {
+      // Add default resolution
+      res = `_${defaults.resolution}`;
+    }
+
     const rss = new RSS(this.config);
     const tvShow = this.tvShow;
 
-    tvShow.download.forEach((download) => {
+    tvShow.magnets.forEach((magnet) => {
       rss.item({
-        title: download.title,
-        description: `Download ${download.title}`,
+        title: magnet[res].title,
+        description: `Download ${magnet[res].title}`,
         enclosure: {
-          url: download._1080p || download._720p || download.sd,
+          url: magnet[res].link,
           length: 0,
           type: 'application/x-bittorrent',
         },
-        url: download._1080p || download._720p || download.sd,
-        date: download._id.getTimestamp(),
+        url: magnet[res].link,
+        date: magnet._id.getTimestamp(),
       });
     });
 

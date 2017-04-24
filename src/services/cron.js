@@ -43,7 +43,7 @@ function logResults() {
 }
 
 function logError(err, show) {
-  const logMessage = `FAILED: "${show.name}" (${err.message})${os.EOL} `;
+  const logMessage = `FAILED: "${show.name}" (${err.message || err.error})${os.EOL} `;
   console.log(logMessage, err);
   log(logMessage);
 }

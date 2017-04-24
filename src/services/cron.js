@@ -9,7 +9,7 @@ import omdb from './omdb';
 import TvShow from '../api/show/model';
 import mongoose from './mongoose';
 import config from '../config';
-import { magnets, filter } from '../util/download';
+import { magnets, retry, filter } from '../util/download';
 
 // Connect to Database
 mongoose.connect(config.mongo.uri);
@@ -43,26 +43,9 @@ function logResults() {
 }
 
 function logError(err, show) {
-  const logMessage = `FAILED: "${show.name}"${os.EOL}`;
+  const logMessage = `FAILED: "${show.name}" (${err.message})${os.EOL} `;
   console.log(logMessage, err);
   log(logMessage);
-}
-
-function update(show) {
-  return function setData(data) {
-    // Empties magnets
-    show.magnets = [];
-    // Push new links
-    data.forEach(filteredData => show.magnets.push(filteredData));
-    // Return save mongoose model promise
-    return show.save();
-  };
-}
-
-function retryWithLastSeason(show) {
-  return function returnData() {
-    return magnets(show, 1);
-  };
 }
 
 function getMagnets(show) {
@@ -71,9 +54,9 @@ function getMagnets(show) {
 
 function updateSeason(show) {
   return new Promise((resolve, reject) => {
-    omdb.getSeason(show.imdbID)
-    .then((season) => {
-      show.current_season = season;
+    omdb.get('imdb', show)
+    .then((response) => {
+      show.current_season = response.season;
       resolve(show);
     })
     .catch(reject);
@@ -88,9 +71,9 @@ function run(shows) {
     // Creates a Promise for each Show
     const p = new Promise((resolve, reject) => {
       updateSeason(show)
-        .then(getMagnets).catch(retryWithLastSeason(show))
+        .then(getMagnets).catch(retry(show))
         .then(filter)
-        .then(update(show))
+        .then(filtered => show.updateMagnets(filtered))
         .then(success)
         .then(resolve)
         .catch((err) => {
@@ -101,7 +84,6 @@ function run(shows) {
     // Add current promise to the List
     promises.push(p);
   });
-
   // Return all Promises
   return Promise.all(promises);
 }
@@ -111,5 +93,5 @@ function run(shows) {
 TvShow.find({})
   .then(run)
   .then(logResults)
-  .catch(err => console.log(err))
+  .catch(process.exit)
   .then(process.exit);

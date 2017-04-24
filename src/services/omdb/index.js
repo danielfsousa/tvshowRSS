@@ -1,14 +1,18 @@
 import omdb from './wrapper';
 
-function getSeason(imdb) {
+function get(type, show) {
+  const params = type === 'imdb'
+    ? { imdb: show.imdbID }
+    : { title: show.name, type: 'series' };
+
   return new Promise((resolve, reject) => {
-    omdb.get({ imdb }, (err, show) => {
-      if (err || !show) {
+    omdb.get(params, (err, response) => {
+      if (err || !response) {
         reject();
       }
-      resolve(show.season);
+      resolve(response);
     });
   });
 }
 
-export default { getSeason };
+export default { get };

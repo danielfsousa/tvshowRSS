@@ -62,14 +62,8 @@ function getById(req, res) {
 export function getByName(req, res) {
   // removes leading/trailing whitespaces
   const name = req.getprop.name.trim();
-  // split show name by spaces
-  const nameSplited = name.split(' ').join('|');
-  // removes spaces from show name
-  const nameJoined = name.split('').join('');
-  // creates a regex with separated and joined words for better accuracy
-  const regex = [nameSplited, nameJoined].join('|');
   // find the best result
-  TvShow.findOne({ name: { $regex: regex, $options: 'i' } })
+  TvShow.findOne({ name: { $regex: name, $options: 'i' } })
         .then(show => (show ? sendFeed(req, res, show) : newTvShow(req, res, 'name')))
         .catch(error(req, res));
 }

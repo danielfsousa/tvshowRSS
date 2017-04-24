@@ -2,23 +2,37 @@ import { Schema } from 'mongoose';
 import mongoose from '../../services/mongoose';
 
 const showSchema = new Schema({
-  imdbID: {
-    type: String,
-    required: true,
-    unique: true,
-  },
+  imdbID: String,
   name: {
     type: String,
     required: true,
   },
   current_season: Number,
   magnets: [{
-    title: String,
-    sd: String,
-    _720p: String,
-    _1080p: String,
+    sd: {
+      title: String,
+      link: String,
+    },
+    _720p: {
+      title: String,
+      link: String,
+    },
+    _1080p: {
+      title: String,
+      link: String,
+    },
   }, { timestamps: true }],
 });
+
+showSchema.methods.updateMagnets = function updateMagnets(filteredMagnets) {
+  // Empties magnets
+  this.magnets = []; // eslint-disable-line
+  console.log('hehe');
+  // Push new links
+  filteredMagnets.forEach(magnetObj => this.magnets.push(magnetObj));
+  // Return save mongoose model promise
+  return this.save();
+};
 
 const model = mongoose.model('TvShow', showSchema);
 

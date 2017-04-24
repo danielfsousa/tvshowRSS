@@ -1,62 +1,91 @@
+import omdb from '../../services/omdb';
 import TvShow from './model';
 import Feed from '../../services/rss';
-import { magnets, filter } from '../../util/download';
+import { magnets, retry, filter } from '../../util/download';
+import { error } from '../../util/error';
+
+function setRequestProperties(req) {
+  req.getprop = {};
+  req.getprop.imdb = req.params.imdb || req.query.imdb;
+  req.getprop.name = req.params.name || req.query.name;
+  req.getprop.resolution = req.params.resolution || req.query.resolution;
+}
 
 function validate(req, res) {
   const message = {
     error: {
       code: 400,
-      info: 'Please, provide a Name or ID parameter',
+      info: 'Please, provide a "name" or "imdb" parameter',
     },
   };
-  if (req.query.name || req.query.id) {
+  if (req.getprop.name || req.getprop.imdb) {
     return true;
   }
   return res.status(message.error.code).json(message);
 }
 
-function sendFeed(res, show) {
-  const rss = new Feed(show).create();
+function sendFeed(req, res, show) {
+  const rss = new Feed(show).create(req.getprop.resolution);
   const xml = rss.xml({ indent: true });
   res.header('Content-Type', 'text/xml; charset=UTF-8');
   res.send(xml);
 }
 
-function newTvShow(req, res, next) {
-  // search omdb
+function newTvShow(req, res, type) {
   const show = new TvShow({
-    imdbID: req.query.id,
-    name: 'Mr. Robot',
-    season: 2,
+    imdbID: req.getprop.imdb,
+    name: req.getprop.name,
   });
 
-  magnets(show)
+  function populate(response) {
+    show.imdbID = response.imdb.id;
+    show.name = response.title;
+    show.current_season = response.season;
+    return show.save();
+  }
+
+  omdb.get(type, show)
+    .then(populate)
+    .then(magnets).catch(retry(show))
     .then(filter)
-    .then(show.save)
-    .then(showObj => sendFeed(res, showObj))
-    .catch(next);
+    .then(filtered => show.updateMagnets(filtered))
+    .then(showObj => sendFeed(req, res, showObj))
+    .catch(error(req, res));
 }
 
-function getById(req, res, next) {
-  TvShow.findOne({ imdbID: req.query.id })
-        .then(show => (show ? sendFeed(res, show) : newTvShow(req, res, next)))
-        .catch(next);
+function getById(req, res) {
+  TvShow.findOne({ imdbID: req.getprop.imdb })
+        .then(show => (show ? sendFeed(req, res, show) : newTvShow(req, res, 'imdb')))
+        .catch(error(req, res));
 }
 
-function getByName(req, res, next) {
-  // TODO
-  return req.query.name === true;
+export function getByName(req, res) {
+  // removes leading/trailing whitespaces
+  const name = req.getprop.name.trim();
+  // split show name by spaces
+  const nameSplited = name.split(' ').join('|');
+  // removes spaces from show name
+  const nameJoined = name.split('').join('');
+  // creates a regex with separated and joined words for better accuracy
+  const regex = [nameSplited, nameJoined].join('|');
+  // find the best result
+  TvShow.findOne({ name: { $regex: regex, $options: 'i' } })
+        .then(show => (show ? sendFeed(req, res, show) : newTvShow(req, res, 'name')))
+        .catch(error(req, res));
 }
 
 export default function getTvShowRSS(req, res, next) {
+  setRequestProperties(req);
   validate(req, res);
 
-  const id = req.query.id;
-  const name = req.query.name;
+  const imdb = req.getprop.imdb;
+  const name = req.getprop.name;
 
   if (name) {
-    getByName(req, res, next);
-  } else if (id) {
-    getById(req, res, next);
+    getByName(req, res);
+  } else if (imdb) {
+    getById(req, res);
+  } else {
+    next();
   }
 }

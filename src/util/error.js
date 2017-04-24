@@ -8,9 +8,9 @@ export function error404(req, res, next) {
 // handle errors
 export function errorHandler(err, req, res) {
   // set locals, only providing error in development
-  if (req.app.get('env') === 'development') {
+  if (req.app.get('env') !== 'production') {
     res.locals.error = err;
-    res.locals.message = err.message;
+    res.locals.message = err.message || err.error;
     res.locals.status = err.status;
     console.log(err);
   }
@@ -21,5 +21,11 @@ export function errorHandler(err, req, res) {
     code: res.locals.status || 500,
     info: res.locals.message,
   } });
+}
+
+export function error(req, res) {
+  return (err) => {
+    errorHandler(err, req, res);
+  };
 }
 

@@ -2496,9 +2496,9 @@ object.omit@^2.0.0:
     for-own "^0.1.4"
     is-extendable "^0.1.1"
 
-omdb@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/omdb/-/omdb-0.7.0.tgz#bcf8187d1f92d5430b11e98deb34aa082c41ec22"
+omdb@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/omdb/-/omdb-0.8.0.tgz#c07ab5dbc97b9c3b3540320e10e730399f377865"
   dependencies:
     durable-json-lint "0.0.2"
     needle "^1.0.0"

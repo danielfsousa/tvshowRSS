@@ -40,7 +40,7 @@ function newTvShow(req, res, type) {
   function populate(response) {
     show.imdbID = response.imdb.id;
     show.name = response.title;
-    show.current_season = response.season;
+    show.current_season = response.totalSeasons;
     return show.save();
   }
 

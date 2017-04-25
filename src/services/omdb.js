@@ -1,4 +1,4 @@
-import omdb from './wrapper';
+import omdb from 'omdb';
 
 function get(type, show) {
   const params = type === 'imdb'

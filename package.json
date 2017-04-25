@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "npm run build && node ./bin/www",
+    "start": "npm run build && pm2 start ./bin/www",
     "dev": "nodemon --exec babel-node ./bin/www",
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts || exit 0 || true",
     "cron": "babel-node ./cron.js",
@@ -13,6 +13,8 @@
     "log:cron": "node read.js cron"
   },
   "dependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-latest": "^6.24.1",
     "body-parser": "~1.17.1",
     "compression": "^1.6.2",
     "debug": "~2.6.3",
@@ -23,10 +25,9 @@
     "morgan": "~1.8.1",
     "moviedb": "^0.2.8",
     "omdb": "^0.7.0",
+    "pm2": "^2.4.5",
     "rarbg": "^0.4.4",
-    "rss": "^1.2.2",
-    "babel-cli": "^6.24.1",
-    "babel-preset-latest": "^6.24.1"
+    "rss": "^1.2.2"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",

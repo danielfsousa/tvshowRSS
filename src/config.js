@@ -14,7 +14,6 @@ const config = {
     env: process.env.NODE_ENV || 'development',
     root: path.join(__dirname, '..'),
     port: process.env.PORT || 3000,
-    moviedb: process.env.MOVIEDB_API_KEY,
     mongo: {
       options: {
         db: {
@@ -59,7 +58,6 @@ const config = {
   },
   production: {
     logger: () => morgan('combined', { stream: fs.createWriteStream('logs/morgan.log', { flags: 'a' }) }),
-    ip: process.env.IP || '127.0.0.1',
     port: process.env.PORT || 8080,
     mongo: {
       uri: process.env.MONGODB_URI || 'mongodb://localhost/rss-tv-shows',

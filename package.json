@@ -8,7 +8,10 @@
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts || exit 0 || true",
     "compile": "rm -rf .compiled && babel src --out-dir .compiled",
     "build": "babel src -d dist",
-    "serve": "node dist/app.js"
+    "serve": "node dist/app.js",
+    "cron": "babel-node ./cron.js",
+    "log:morgan": "cat ./logs/morgan.log",
+    "log:cron": "cat ./logs/cron.log"
   },
   "dependencies": {
     "body-parser": "~1.17.1",

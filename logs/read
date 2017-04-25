@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+onst path = require('path');
 
-fs.readFile(`${process.argv[2]}.log`, (err, data) => {
+const file = path.join(__dirname, `${process.argv[2]}.log`);
+
+fs.readFile(file, (err, data) => {
   if (err) throw err;
   console.log(data);
 });

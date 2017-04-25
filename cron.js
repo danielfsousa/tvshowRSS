@@ -5,11 +5,11 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import omdb from './omdb';
-import TvShow from '../api/show/model';
-import mongoose from './mongoose';
-import config from '../config';
-import { magnets, retry, filter } from '../util/download';
+import omdb from './src/services/omdb';
+import TvShow from './src/api/show/model';
+import mongoose from './src/services/mongoose';
+import config from './src/config';
+import { magnets, retry, filter } from './src/util/download';
 
 // Connect to Database
 mongoose.connect(config.mongo.uri);

@@ -3,7 +3,7 @@ node_modules
 public
 .tmp
 .idea
-.log
+*.log
 compiled
 dist
 docs
@@ -12,4 +12,3 @@ npm-debug.log
 .nyc_output
 coverage
 cassettes
-logs

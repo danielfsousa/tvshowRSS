@@ -4,12 +4,10 @@ import dotenv from 'dotenv-safe';
 import morgan from 'morgan';
 import fs from 'fs';
 
-if (process.env.NODE_ENV !== 'production') {
-  dotenv.load({
-    path: path.join(__dirname, '../.env'),
-    sample: path.join(__dirname, '../.env.example'),
-  });
-}
+dotenv.load({
+  path: path.join(__dirname, '../.env'),
+  sample: path.join(__dirname, '../.env.example'),
+});
 
 const config = {
   all: {

@@ -3,6 +3,8 @@
 
 var app, config;
 
+console.log('NODE_ENV = ', process.env.NODE_ENV);
+
 if (process.env.NODE_ENV === 'production') {
   app = require('../dist/app');
   config = require('../dist/config');
@@ -10,8 +12,6 @@ if (process.env.NODE_ENV === 'production') {
   app = require('../src/app');
   config = require('../src/config');
 }
-
-  console.log(process.env.NODE_ENV);
 
 /**
  * Module dependencies.

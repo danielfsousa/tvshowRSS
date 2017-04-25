@@ -18,8 +18,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // logs
-// config.makeLogFiles();
-// app.use(config.logger());
+config.makeLogFiles();
+app.use(config.logger());
 
 // api routes
 app.use(api);

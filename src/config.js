@@ -34,11 +34,11 @@ const config = {
     makeLogFiles: () => {
       const logMorgan = path.join(__dirname, '../logs/morgan.log');
       const logCron = path.join(__dirname, '../logs/cron.log');
-      if (!fs.existsSync(path.dirname(logCron, ''))) {
-        fs.mkdirSync(path.dirname(logCron, ''));
+      if (!fs.existsSync(path.dirname(logCron))) {
+        fs.mkdirSync(path.dirname(logCron));
       }
-      fs.writeFileSync(logCron);
-      fs.writeFileSync(logMorgan);
+      fs.writeFileSync(logCron, '');
+      fs.writeFileSync(logMorgan, '');
     },
   },
   test: {

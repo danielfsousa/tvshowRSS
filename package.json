@@ -11,7 +11,8 @@
     "serve": "node dist/app.js",
     "cron": "babel-node ./cron.js",
     "log:morgan": "cat ./logs/morgan.log",
-    "log:cron": "cat ./logs/cron.log"
+    "log:cron": "cat ./logs/cron.log",
+    "deploy": "git push digitalocean master"
   },
   "dependencies": {
     "body-parser": "~1.17.1",

@@ -42,6 +42,7 @@ function logResults() {
   logFile.close();
 }
 
+
 function logError(err, show) {
   const logMessage = `FAILED: "${show.name}" (${err.message || err.error})${os.EOL} `;
   console.log(logMessage, err);

@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon --exec babel-node ./bin/www",
+    "start": "npm run build && node ./dist/app.js",
+    "dev": "nodemon --exec babel-node ./bin/www",
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts || exit 0 || true",
     "compile": "rm -rf .compiled && babel src --out-dir .compiled",
     "build": "babel src -d dist",
@@ -21,17 +22,20 @@
     "moviedb": "^0.2.8",
     "omdb": "^0.7.0",
     "rarbg": "^0.4.4",
-    "rss": "^1.2.2"
+    "rss": "^1.2.2",
+    "babel-cli": "^6.24.1",
+    "babel-preset-latest": "^6.24.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
-    "babel-preset-latest": "^6.24.1",
     "eslint": "^3.19.0",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.9.0",
     "nodemon": "^1.11.0"
+  },
+  "engines": {
+    "node": "7.6.0"
   }
 }

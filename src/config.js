@@ -31,6 +31,15 @@ const config = {
       ttl: 30,
       resolution: '720p',
     },
+    makeLogFiles: () => {
+      const logMorgan = path.join(__dirname, '../logs/morgan.log');
+      const logCron = path.join(__dirname, '../logs/cron.log');
+      if (!fs.existsSync(path.dirname(logCron, ''))) {
+        fs.mkdirSync(path.dirname(logCron, ''));
+      }
+      fs.writeFileSync(logCron);
+      fs.writeFileSync(logMorgan);
+    },
   },
   test: {
     logger: () => morgan('dev'),
@@ -51,7 +60,7 @@ const config = {
     },
   },
   production: {
-    logger: () => morgan('combined', { stream: fs.createWriteStream('../log/morgan.log', { flags: 'a' }) }),
+    logger: () => morgan('combined', { stream: fs.createWriteStream('logs/morgan.log', { flags: 'a' }) }),
     ip: process.env.IP || '127.0.0.1',
     port: process.env.PORT || 8080,
     mongo: {

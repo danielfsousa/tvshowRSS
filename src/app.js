@@ -9,25 +9,23 @@ import { error404, errorHandler } from './util/error';
 
 const app = express();
 
+// database
 mongoose.connect(config.mongo.uri);
 
 // middlewares
 app.use(compression());
-app.use(config.logger());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// logs
+// config.makeLogFiles();
+// app.use(config.logger());
+
 // api routes
 app.use(api);
-
-app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
 
 // error handler
 app.use(error404);
 app.use(errorHandler);
 
-export default app;
+module.exports = app;

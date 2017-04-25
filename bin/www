@@ -1,14 +1,25 @@
 #!/usr/bin/env node
+/* eslint-disable */
 
-import config from '../src/config';
+var app, config;
+
+if (process.env.NODE_ENV === 'production') {
+  app = require('../dist/app');
+  config = require('../dist/config');
+} else {
+  console.log('development');
+  app = require('../src/app');
+  config = require('../src/config');
+}
+
+  console.log('production', process.env.NODE_ENV);
 
 /**
  * Module dependencies.
  */
 
-import app from '../src/app';
-import debugModule from 'debug';
-import http from 'http';
+const debugModule = require('debug');
+const http = require('http');
 
 const debug = debugModule('restful-web-api-design:server');
 

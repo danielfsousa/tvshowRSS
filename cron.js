@@ -56,7 +56,7 @@ function updateSeason(show) {
   return new Promise((resolve, reject) => {
     omdb.get('imdb', show)
     .then((response) => {
-      show.current_season = response.season;
+      show.current_season = response.totalSeasons;
       resolve(show);
     })
     .catch(reject);

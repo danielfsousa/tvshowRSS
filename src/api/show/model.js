@@ -27,7 +27,6 @@ const showSchema = new Schema({
 showSchema.methods.updateMagnets = function updateMagnets(filteredMagnets) {
   // Empties magnets
   this.magnets = []; // eslint-disable-line
-  console.log('hehe');
   // Push new links
   filteredMagnets.forEach(magnetObj => this.magnets.push(magnetObj));
   // Return save mongoose model promise

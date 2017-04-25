@@ -49,7 +49,6 @@ export default class Feed {
           length: 0,
           type: 'application/x-bittorrent',
         },
-        url: magnet[res].link,
         date: magnet._id.getTimestamp(),
       });
     });

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "npm run build && pm2 start ./bin/www",
+    "prod": "npm run build && node ./bin/www",
     "dev": "nodemon --exec babel-node ./bin/www",
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts || exit 0 || true",
     "cron": "babel-node ./cron.js",

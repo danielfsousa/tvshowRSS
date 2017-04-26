@@ -1,8 +1,27 @@
 #!/usr/bin/env node
 /* eslint-disable */
 
-var app, config;
+/**
+ * Module dependencies.
+ */
+const debugModule = require('debug');
+const http = require('http');
+const debug = debugModule('restful-web-api-design:server');
+var path = require('path');
 
+/**
+ * Load Environment variables.
+ */
+require('dotenv-safe').load({
+  path: path.join(__dirname, '../.env'),
+  sample: path.join(__dirname, '../.env.example'),
+});
+
+/**
+ * Load express
+ */
+
+var app, config;
 if (process.env.NODE_ENV === 'production') {
   app = require('../dist/app');
   config = require('../dist/config');
@@ -12,15 +31,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 console.log('NODE_ENV = ', process.env.NODE_ENV);
-
-/**
- * Module dependencies.
- */
-
-const debugModule = require('debug');
-const http = require('http');
-
-const debug = debugModule('restful-web-api-design:server');
 
 /**
  * Get port from environment and store in Express.

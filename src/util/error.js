@@ -1,31 +1,33 @@
-// catch 404 and forward to error handler
-export function error404(req, res, next) {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-}
-
 // handle errors
-export function errorHandler(err, req, res) {
-  // set locals, only providing error in development
-  if (req.app.get('env') !== 'production') {
-    res.locals.error = err;
-    res.locals.message = err.message || err.error;
-    res.locals.status = err.status;
+export function errorHandler(req, res) {
+  return (err) => {
+    if (!err) return;
+    // Log error
     console.log(err);
-  }
 
-  // render the error page
-  res.status(res.locals.status || 500);
-  res.send({ error: {
-    code: res.locals.status || 500,
-    info: res.locals.message,
-  } });
+    res.locals.message = err.message ||
+      (err.error === 'No results found' ? 'No download links found' : '');
+
+    res.locals.status = err.status ||
+      (err.error === 'No results found' ? 404 : 500);
+
+    // render the error page if headers were not sent
+    if (!res.headersSent) {
+      res.status(res.locals.status);
+      res.send({ error: {
+        code: res.locals.status,
+        message: res.locals.message,
+      } }).end();
+    }
+  };
 }
 
-export function error(req, res) {
-  return (err) => {
-    errorHandler(err, req, res);
-  };
+// route not found
+export function badRequest(req, res) {
+  const host = `${req.get('host')}/shows/`;
+  res.status(400).send({ error: {
+    code: 400,
+    message: `Api usage: ${host}<nameOrImdbID>/<resolution> or ${host}<nameOrImdbID>?resolution=<resolution>`,
+  } });
 }
 

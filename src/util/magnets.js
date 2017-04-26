@@ -1,5 +1,6 @@
-import { padStart } from 'lodash';
+import { padStart, pick } from 'lodash';
 import rarbg from 'rarbg';
+import TvShow from '../api/show/model';
 
 export function filter(rarbgData) {
   const regexEP = /S\d+E\d+/i;
@@ -90,6 +91,35 @@ export function magnets(show, previousSeasons = 0) {
 }
 
 export function retry(show) {
-  return () => magnets(show, 1)
-  .catch(() => magnets(show, 2));
+  return function tryAgain() {
+    if (!(show.imdbID && show.name)) {
+      const error = new Error('Tv show not found');
+      error.status = 404;
+      return Promise.reject(error);
+    }
+    if (show.current_season <= 1) {
+      const error = new Error('No download links found');
+      error.status = 404;
+      return Promise.reject(error);
+    }
+    return magnets(show, 1).catch(() => magnets(show, 2));
+  };
+}
+
+export function save(show) {
+  return (filteredMagnets) => {
+    const updated = show;
+    // Empties array
+    updated.magnets = [];
+    // Push new links
+    filteredMagnets.forEach(magnetObj => updated.magnets.push(magnetObj));
+    // Try to update model
+    return updated.save().catch(() => {
+      // If a document with the same imdbID already exists
+      // Get updated properties
+      const updatedProps = pick(updated, ['current_season', 'magnets']);
+      // Update that one
+      TvShow.update({ imdbID: show.imdbID }, updatedProps);
+    });
+  };
 }

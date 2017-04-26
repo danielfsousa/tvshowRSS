@@ -57,7 +57,7 @@ const config = {
     },
   },
   production: {
-    logger: () => morgan('combined', { stream: fs.createWriteStream('logs/morgan.log', { flags: 'a' }) }),
+    logger: () => morgan('common', { stream: fs.createWriteStream('logs/morgan.log', { flags: 'a' }) }),
     port: process.env.PORT || 8080,
     mongo: {
       uri: process.env.MONGODB_URI || 'mongodb://localhost/rss-tv-shows',

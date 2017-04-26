@@ -1,31 +1,25 @@
 import omdb from '../../services/omdb';
 import TvShow from './model';
 import Feed from '../../services/rss';
-import { magnets, retry, filter } from '../../util/download';
-import { error } from '../../util/error';
+import { magnets, retry, filter, save } from '../../util/magnets';
+import { errorHandler } from '../../util/error';
 
 function setRequestProperties(req) {
-  req.getprop = {};
-  req.getprop.imdb = req.params.imdb || req.query.imdb;
-  req.getprop.name = req.params.name || req.query.name;
-  req.getprop.resolution = req.params.resolution || req.query.resolution;
-}
-
-function validate(req, res) {
-  const message = {
-    error: {
-      code: 400,
-      info: 'Please, provide a "name" or "imdb" parameter',
-    },
-  };
-  if (req.getprop.name || req.getprop.imdb) {
-    return true;
-  }
-  return res.status(message.error.code).json(message);
+  const isImdbID = /tt\d{7}/.test(req.params.idOrName);
+  req.locals = {};
+  req.locals.imdb = isImdbID ? req.params.idOrName : null;
+  req.locals.name = isImdbID ? null : req.params.idOrName;
+  req.locals.resolution = req.params.resolution || req.query.resolution;
 }
 
 function sendFeed(req, res, show) {
-  const rss = new Feed(show).create(req.getprop.resolution);
+  if (show.magnets.length === 0) {
+    const error = new Error('No download links found');
+    error.status = 404;
+    errorHandler(req, res)(error);
+  }
+
+  const rss = new Feed(show).create(req.locals.resolution);
   const xml = rss.xml({ indent: true });
   res.header('Content-Type', 'text/xml; charset=UTF-8');
   res.send(xml);
@@ -33,47 +27,48 @@ function sendFeed(req, res, show) {
 
 function newTvShow(req, res, type) {
   const show = new TvShow({
-    imdbID: req.getprop.imdb,
-    name: req.getprop.name,
+    imdbID: req.locals.imdb,
+    name: req.locals.name,
   });
 
   function populate(response) {
     show.imdbID = response.imdb.id;
     show.name = response.title;
     show.current_season = response.totalSeasons;
-    return show.save();
+    return Promise.resolve(show);
   }
 
   omdb.get(type, show)
+    .catch(errorHandler(req, res))
     .then(populate)
-    .then(magnets).catch(retry(show))
+    .then(magnets)
+    .catch(retry(show))
     .then(filter)
-    .then(filtered => show.updateMagnets(filtered))
-    .then(showObj => sendFeed(req, res, showObj))
-    .catch(error(req, res));
+    .then(save(show))
+    .then(() => sendFeed(req, res, show))
+    .catch(errorHandler(req, res));
 }
 
 function getById(req, res) {
-  TvShow.findOne({ imdbID: req.getprop.imdb })
+  TvShow.findOne({ imdbID: req.locals.imdb })
         .then(show => (show ? sendFeed(req, res, show) : newTvShow(req, res, 'imdb')))
-        .catch(error(req, res));
+        .catch(errorHandler(req, res));
 }
 
 export function getByName(req, res) {
   // removes leading/trailing whitespaces
-  const name = req.getprop.name.trim();
+  const name = req.locals.name.trim();
   // find the best result
   TvShow.findOne({ name: { $regex: name, $options: 'i' } })
         .then(show => (show ? sendFeed(req, res, show) : newTvShow(req, res, 'name')))
-        .catch(error(req, res));
+        .catch(errorHandler(req, res));
 }
 
 export default function getTvShowRSS(req, res, next) {
   setRequestProperties(req);
-  validate(req, res);
 
-  const imdb = req.getprop.imdb;
-  const name = req.getprop.name;
+  const imdb = req.locals.imdb;
+  const name = req.locals.name;
 
   if (name) {
     getByName(req, res);

@@ -5,7 +5,7 @@ import mongoose from './services/mongoose';
 
 import config from './config';
 import api from './api';
-import { error404, errorHandler } from './util/error';
+import { badRequest } from './util/error';
 
 const app = express();
 
@@ -24,8 +24,7 @@ app.use(config.logger());
 // api routes
 app.use(api);
 
-// error handler
-app.use(error404);
-app.use(errorHandler);
+// route not found
+app.use(badRequest);
 
 module.exports = app;

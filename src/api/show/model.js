@@ -2,7 +2,11 @@ import { Schema } from 'mongoose';
 import mongoose from '../../services/mongoose';
 
 const showSchema = new Schema({
-  imdbID: String,
+  imdbID: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   name: {
     type: String,
     required: true,
@@ -23,15 +27,6 @@ const showSchema = new Schema({
     },
   }, { timestamps: true }],
 });
-
-showSchema.methods.updateMagnets = function updateMagnets(filteredMagnets) {
-  // Empties magnets
-  this.magnets = []; // eslint-disable-line
-  // Push new links
-  filteredMagnets.forEach(magnetObj => this.magnets.push(magnetObj));
-  // Return save mongoose model promise
-  return this.save();
-};
 
 const model = mongoose.model('TvShow', showSchema);
 

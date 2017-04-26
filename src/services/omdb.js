@@ -7,8 +7,13 @@ function get(type, show) {
 
   return new Promise((resolve, reject) => {
     omdb.get(params, (err, response) => {
-      if (err || !response) {
-        reject();
+      if (err) {
+        reject(err);
+      }
+      if (!response) {
+        const error = new Error('Tv show not found');
+        error.status = 404;
+        reject(error);
       }
       resolve(response);
     });

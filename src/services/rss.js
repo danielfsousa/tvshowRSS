@@ -1,6 +1,7 @@
 import { padStart, includes } from 'lodash';
 import RSS from 'rss';
 import { rss as defaults } from '../config';
+import { logger } from '../util/logger';
 
 export const resolutions = {
   SD: 'sd',
@@ -30,9 +31,11 @@ export default class Feed {
 
     // Check if resolution requested by the user is valid
     if (includes(resolutions, videoResolution)) {
+      logger.debug(`REQUESTED RESOLUTION: ${videoResolution}`);
       // Add an underscore if resolution beggins with a number
       res = videoResolution.includes('p') ? `_${videoResolution}` : videoResolution;
     } else {
+      logger.debug(`RESOLUTION ID NOT SET OR NOR VALID. DEFAULT: ${defaults.resolution}`);
       // Add default resolution
       res = `_${defaults.resolution}`;
     }

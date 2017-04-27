@@ -7,7 +7,7 @@
 const debugModule = require('debug');
 const http = require('http');
 const debug = debugModule('restful-web-api-design:server');
-var path = require('path');
+const path = require('path');
 
 /**
  * Load Environment variables.
@@ -111,4 +111,5 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+  console.log('Listening on ' + bind);
 }

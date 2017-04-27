@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
-import { mongo } from '../config';
+import config from '../config';
+import { logger } from '../util/logger';
 
-Object.keys(mongo.options).forEach((key) => {
-  mongoose.set(key, mongo.options[key]);
+Object.keys(config.mongo.options).forEach((key) => {
+  mongoose.set(key, config.mongo.options[key]);
 });
 
 mongoose.Promise = Promise;
@@ -12,7 +13,7 @@ mongoose.Types.ObjectId.prototype.view = function view() {
 };
 
 mongoose.connection.on('error', (err) => {
-  console.error(`MongoDB connection error: ${err}`);
+  logger.error(`MongoDB connection error: ${err}`);
   process.exit(-1);
 });
 

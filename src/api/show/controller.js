@@ -3,7 +3,15 @@ import TvShow from './model';
 import Feed from '../../services/rss';
 import { magnets, retry, filter, save } from '../../util/magnets';
 import { errorHandler } from '../../util/error';
+import { logger } from '../../util/logger';
+import { rss as defaults } from '../../config';
 
+
+/**
+ *  Set locals properties on the Request object
+ *
+ * @param {Request} req
+ */
 function setRequestProperties(req) {
   const isImdbID = /tt\d{7}/.test(req.params.idOrName);
   req.locals = {};
@@ -18,9 +26,9 @@ function sendFeed(req, res, show) {
     error.status = 404;
     errorHandler(req, res)(error);
   }
-
   const rss = new Feed(show).create(req.locals.resolution);
   const xml = rss.xml({ indent: true });
+  logger.info(`RESPONSE name: ${show.name} | imdbID: ${show.imdbID} | resolution: ${req.locals.resolution || defaults.resolution} | season: ${show.current_season} | magnets: ${show.magnets.length}`);
   res.header('Content-Type', 'text/xml; charset=UTF-8');
   res.send(xml);
 }
@@ -64,6 +72,14 @@ export function getByName(req, res) {
         .catch(errorHandler(req, res));
 }
 
+/*
+*
+*   GET TV SHOW MAGNETS BY [NAME] OR [IMDBID]
+*
+*   /shows/:idOrName
+*   /shows/:idOrName/:resolution
+*
+*/
 export default function getTvShowRSS(req, res, next) {
   setRequestProperties(req);
 
@@ -71,10 +87,13 @@ export default function getTvShowRSS(req, res, next) {
   const name = req.locals.name;
 
   if (name) {
+    logger.debug(`GET TV SHOW MAGNETS BY NAME: ${req.locals.name}`);
     getByName(req, res);
   } else if (imdb) {
+    logger.debug(`GET TV SHOW MAGNETS BY IMDBID: ${req.locals.imdb}`);
     getById(req, res);
   } else {
+    logger.debug('NAME AND IMDBID WERE NOT SET');
     next();
   }
 }

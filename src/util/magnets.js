@@ -1,6 +1,7 @@
 import { padStart, pick } from 'lodash';
 import rarbg from 'rarbg';
 import TvShow from '../api/show/model';
+import { logger } from './logger';
 
 export function filter(rarbgData) {
   const regexEP = /S\d+E\d+/i;
@@ -11,6 +12,7 @@ export function filter(rarbgData) {
   // ex: epMap.set('S02E01', {'title': 'abc', 'link': 'abc.com'})
   const epMap = new Map();
 
+  logger.debug('DOWNLOAD MAGNETS FILTERED:');
   rarbgData.forEach((obj) => {
     // Episode identifier
     // ex: S02E01
@@ -27,6 +29,7 @@ export function filter(rarbgData) {
 
     // if magnet link is 1080p and we haven't pushed one 1080p link yet
     if (regex1080p.test(obj.filename) && !('link' in epMap.get(episode)._1080p)) {
+      logger.debug(`1080p: ${obj.filename}`);
       // Creates new 1080p object
       const new1080p = {
         title: obj.filename,
@@ -38,6 +41,7 @@ export function filter(rarbgData) {
 
     // if magnet link is 720p and we haven't pushed one 720p link yet
     else if (regex720p.test(obj.filename) && !('link' in epMap.get(episode)._720p)) {
+      logger.debug(`720p: ${obj.filename}`);
       // Creates new 720p object
       const new720p = {
         title: obj.filename,
@@ -53,7 +57,8 @@ export function filter(rarbgData) {
       !(regex720p.test(obj.filename) || regex1080p.test(obj.filename))
       &&
       !('link' in epMap.get(episode).sd)
-    ) {
+  ) {
+      logger.debug(`SD: ${obj.filename}`);
       // Creates new SD object
       const newSD = {
         title: obj.filename,
@@ -91,6 +96,7 @@ export function magnets(show, previousSeasons = 0) {
 }
 
 export function retry(show) {
+  logger.info(`MAGNETS NOT FOUND: ${show.name}. TRYING AGAIN...`);
   return function tryAgain() {
     if (!(show.imdbID && show.name)) {
       const error = new Error('Tv show not found');
@@ -115,6 +121,7 @@ export function save(show) {
     filteredMagnets.forEach(magnetObj => updated.magnets.push(magnetObj));
     // Try to update model
     return updated.save().catch(() => {
+      logger.warn(`${show.name} WAS FOUND ON DATABSE. UPDATING THE DOCUMENT...`);
       // If a document with the same imdbID already exists
       // Get updated properties
       const updatedProps = pick(updated, ['current_season', 'magnets']);

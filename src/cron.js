@@ -2,24 +2,16 @@
 
 /* eslint-disable no-param-reassign */
 
-import fs from 'fs';
 import os from 'os';
-import path from 'path';
-import omdb from './src/services/omdb';
-import TvShow from './src/api/show/model';
-import mongoose from './src/services/mongoose';
-import config from './src/config';
-import { magnets, retry, filter, save } from './src/util/magnets';
+import omdb from './services/omdb';
+import TvShow from './api/show/model';
+import mongoose from './services/mongoose';
+import config from './config';
+import { magnets, retry, filter, save } from './util/magnets';
+import { cron as logger } from './util/logger';
 
 // Connect to Database
 mongoose.connect(config.mongo.uri);
-
-// Create LOG File
-const logDir = path.join(__dirname, 'logs/cron.log');
-if (!fs.existsSync(path.dirname(logDir))) {
-  fs.mkdirSync(path.dirname(logDir));
-}
-const logFile = fs.createWriteStream(logDir, { flags: 'a' });
 
 // List of updated Tv Shows
 const updated = [];
@@ -36,23 +28,18 @@ function error(err, show) {
   });
 }
 
-function write(text) {
-  logFile.write(`[${Date()}] ${text}`);
-}
-
 function logResults() {
   console.log(); // new line
-  updated.forEach((name) => {
-    const logMessage = `UPDATED: "${name}"${os.EOL}`;
-    console.log(logMessage);
-    write(logMessage);
+  updated.forEach((name, index) => {
+    const eol = updated.length === index + 1 ? os.EOL : '';
+    const logMessage = `UPDATED: "${name}"${eol}`;
+    logger.info(logMessage);
   });
-  failed.forEach((err) => {
-    const logMessage = `FAILED: "${err.name}" (${err.message})${os.EOL} `;
-    console.log(logMessage);
-    write(logMessage);
+  failed.forEach((err, index) => {
+    const eol = failed.length === index + 1 ? os.EOL : '';
+    const logMessage = `FAILED: "${err.name}" (${err.message})${eol}`;
+    logger.error(logMessage);
   });
-  logFile.close();
 }
 
 function getMagnets(show) {
@@ -96,10 +83,14 @@ function run(shows) {
   return Promise.all(promises);
 }
 
+function exit() {
+  setTimeout(() => process.exit(), 10000);
+}
+
 // ----------------------------------------------------- //
 
 TvShow.find({})
   .then(run)
   .then(logResults)
-  .catch(process.exit)
-  .then(process.exit);
+  .catch(exit)
+  .then(exit);

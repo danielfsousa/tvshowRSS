@@ -1,8 +1,23 @@
-import _ from 'lodash';
+import { merge } from 'lodash';
+import moment from 'moment';
 import path from 'path';
-import morgan from 'morgan';
-import fs from 'fs';
+import winston from 'winston';
 
+// Import .env
+require('dotenv-safe').load({
+  path: path.join(__dirname, '../.env'),
+  sample: path.join(__dirname, '../.env.example'),
+});
+
+// Logs Directory
+const logDir = path.join(__dirname, '../logs');
+
+// Date timestamp
+function timestamp() {
+  return moment().locale('pt-br').format('DD/MM/YYYY HH:mm:ss [(Brasília)]');
+}
+
+// Config object to return
 const config = {
   all: {
     env: process.env.NODE_ENV || 'development',
@@ -22,18 +37,66 @@ const config = {
       ttl: 30,
       resolution: '720p',
     },
-    makeLogFiles: () => {
-      const logMorgan = path.join(__dirname, '../logs/morgan.log');
-      const logCron = path.join(__dirname, '../logs/cron.log');
-      if (!fs.existsSync(path.dirname(logCron))) {
-        fs.mkdirSync(path.dirname(logCron));
-      }
-      fs.writeFileSync(logCron, '');
-      fs.writeFileSync(logMorgan, '');
+    logDir,
+    logDefault: {
+      transports: [
+        new winston.transports.File({
+          name: 'file.errors',
+          level: 'error',
+          filename: path.join(logDir, 'errors.log'),
+          handleExceptions: true,
+          json: false,
+          maxsize: 5242880, // 5MB
+          maxFiles: 10,
+          colorize: true,
+          timestamp,
+        }),
+        new winston.transports.File({
+          name: 'file.all',
+          level: 'info',
+          filename: path.join(logDir, 'all.log'),
+          handleExceptions: true,
+          json: false,
+          maxsize: 5242880, // 5MB
+          maxFiles: 10,
+          colorize: true,
+          timestamp,
+        }),
+        new winston.transports.Console({
+          level: 'debug',
+          handleExceptions: true,
+          json: false,
+          colorize: true,
+          prettyPrint: true,
+        }),
+      ],
+      exitOnError: false,
+    },
+    logCron: {
+      transports: [
+        new winston.transports.File({
+          level: 'info',
+          filename: path.join(logDir, 'cron.log'),
+          handleExceptions: true,
+          json: false,
+          maxsize: 5242880, // 5MB
+          maxFiles: 10,
+          colorize: true,
+          timestamp,
+        }),
+        new winston.transports.Console({
+          level: 'debug',
+          handleExceptions: true,
+          json: false,
+          colorize: true,
+          prettyPrint: true,
+        }),
+      ],
+      exitOnError: false,
     },
   },
   test: {
-    logger: () => morgan('dev'),
+    logEnv: 'dev',
     mongo: {
       uri: 'mongodb://localhost/rss-tv-show-test',
       options: {
@@ -42,7 +105,7 @@ const config = {
     },
   },
   development: {
-    logger: () => morgan('dev'),
+    logEnv: 'dev',
     mongo: {
       uri: process.env.MONGODB_URI,
       options: {
@@ -51,7 +114,7 @@ const config = {
     },
   },
   production: {
-    logger: () => morgan('common', { stream: fs.createWriteStream('logs/morgan.log', { flags: 'a' }) }),
+    logEnv: 'combined',
     port: process.env.PORT || 8080,
     mongo: {
       uri: process.env.MONGODB_URI || 'mongodb://localhost/rss-tv-shows',
@@ -59,5 +122,5 @@ const config = {
   },
 };
 
-module.exports = _.merge(config.all, config[config.all.env]);
+module.exports = merge(config.all, config[config.all.env]);
 export default module.exports;

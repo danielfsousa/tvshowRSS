@@ -1,11 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import compression from 'compression';
+import morgan from 'morgan';
 import mongoose from './services/mongoose';
-
+import { stream } from './util/logger';
 import config from './config';
-import api from './api';
 import { badRequest } from './util/error';
+import api from './api';
 
 const app = express();
 
@@ -18,8 +19,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // logs
-config.makeLogFiles();
-app.use(config.logger());
+app.use(morgan(config.logEnv, { stream }));
 
 // api routes
 app.use(api);

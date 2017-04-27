@@ -31,10 +31,30 @@
             "port": 5858
         },
         {
-            "name": "Debug",
+            "name": "Cron",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceRoot}/src/app.js",
+            "program": "${workspaceRoot}/src/cron.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": null,
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/babel-node.cmd",
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "console": "internalConsole",
+            "sourceMaps": true,
+            "outFiles": []
+        },
+        {
+            "name": "_Test",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/_test.js",
             "stopOnEntry": false,
             "args": [],
             "cwd": "${workspaceRoot}",

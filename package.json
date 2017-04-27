@@ -7,21 +7,23 @@
     "prod": "npm run build && node ./bin/www",
     "dev": "nodemon --exec babel-node ./bin/www",
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts || exit 0 || true",
-    "cron": "babel-node ./cron.js",
+    "cron": "babel-node ./src/cron.js",
     "build": "babel src -d dist",
     "deploy": "git push digitalocean master",
-    "log:morgan": "node read.js morgan",
-    "log:cron": "node read.js cron"
+    "log:all": "node readlogs.js all",
+    "log:morgan": "node readlogs.js morgan",
+    "log:cron": "node readlogs.js cron"
   },
   "dependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-preset-latest": "^6.24.1",
+    "babel-cli": "*",
+    "babel-preset-latest": "*",
     "body-parser": "~1.17.1",
     "compression": "^1.6.2",
     "debug": "~2.6.3",
     "dotenv-safe": "^4.0.3",
     "express": "~4.15.2",
     "lodash": "^4.17.4",
+    "moment": "^2.18.1",
     "mongoose": "^4.9.5",
     "morgan": "~1.8.1",
     "moviedb": "^0.2.8",
@@ -32,7 +34,7 @@
     "winston": "^2.3.1"
   },
   "devDependencies": {
-    "babel-eslint": "^7.2.3",
+    "babel-eslint": "*",
     "eslint": "^3.19.0",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-import": "^2.2.0",

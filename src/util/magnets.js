@@ -1,8 +1,21 @@
+/**
+ * Module dependencies.
+ * @private
+ */
+
 import { padStart, pick } from 'lodash';
 import rarbg from 'rarbg';
 import TvShow from '../api/show/model';
 import { logger } from './logger';
 
+/**
+ * Filter RARBG data by Episode and Resolution
+ *
+ * @public
+ * @export
+ * @param {Array} rarbgData
+ * @returns {Promise} resolved to a magnets Array
+ */
 export function filter(rarbgData) {
   const regexEP = /S\d+E\d+/i;
   const regex1080p = /1080p/i;
@@ -73,10 +86,18 @@ export function filter(rarbgData) {
   const filteredData = [];
   epMap.forEach(val => filteredData.push(val));
 
-  // return the filtered Array
   return Promise.resolve(filteredData);
 }
 
+/**
+ * Get magnets from RARBG
+ *
+ * @public
+ * @export
+ * @param {TvShow} show
+ * @param {number} [previousSeasons=0]
+ * @returns {Promise}
+ */
 export function magnets(show, previousSeasons = 0) {
   const season = show.current_season - previousSeasons;
   const fmtSeason = `S${padStart(season, 2, 0)}`;
@@ -95,6 +116,15 @@ export function magnets(show, previousSeasons = 0) {
   return rarbg.search(options);
 }
 
+/**
+ * Subtracts 1 or 2 numbers from TvShow current season
+ * and try to get magnets from RARBG again
+ *
+ * @public
+ * @export
+ * @param {TvShow} show
+ * @returns {Promise} of {@link magnets}
+ */
 export function retry(show) {
   logger.info(`MAGNETS NOT FOUND: ${show.name}. TRYING AGAIN...`);
   return function tryAgain() {
@@ -112,6 +142,13 @@ export function retry(show) {
   };
 }
 
+/**
+ * Updates TvShow magnets and saves it.
+ *
+ * @export
+ * @param {TvShow} show
+ * @returns {Promise}
+ */
 export function save(show) {
   return (filteredMagnets) => {
     const updated = show;

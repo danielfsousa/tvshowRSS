@@ -1,6 +1,10 @@
 #!/usr/bin/env node
-
 /* eslint-disable no-param-reassign */
+
+/**
+ * Module dependencies.
+ * @private
+ */
 
 import os from 'os';
 import omdb from './services/omdb';
@@ -10,17 +14,33 @@ import config from './config';
 import { magnets, retry, filter, save } from './util/magnets';
 import { cron as logger } from './util/logger';
 
-// Connect to Database
+// Connect to database
 mongoose.connect(config.mongo.uri);
 
-// List of updated Tv Shows
+/**
+ * List of shows
+ * @private
+ */
 const updated = [];
 const failed = [];
 
+/**
+ * Add show name to the array of updated shows
+ * @private
+ *
+ * @param {TvShow} show
+ */
 function success(show) {
   updated.push(show.name);
 }
 
+/**
+ * Add show name and error message to the failed array
+ *
+ * @param {Object} err
+ * @param {TvShow} show
+ * @private
+ */
 function error(err, show) {
   failed.push({
     name: show.name,
@@ -28,6 +48,10 @@ function error(err, show) {
   });
 }
 
+/**
+ * Log results
+ * @private
+ */
 function logResults() {
   console.log(); // new line
   updated.forEach((name, index) => {
@@ -42,6 +66,13 @@ function logResults() {
   });
 }
 
+/**
+ * Get TvShow magnets from RARBG
+ *
+ * @param {TvShow} show
+ * @returns {Promise}
+ * @private
+ */
 function getMagnets(show) {
   return magnets(show);
 }
@@ -57,12 +88,18 @@ function updateSeason(show) {
   });
 }
 
+/**
+ * Tries to update magnets of all TvShows
+ *
+ * @param {Array} shows
+ * @returns {Promise} all TvShow's promises
+ * @private
+ */
 function run(shows) {
-  // List of Promises
   const promises = [];
 
   shows.forEach((show) => {
-    // Creates a Promise for each Show
+    // creates a Promise for each Show
     const p = new Promise((resolve, reject) => {
       updateSeason(show)
         .then(getMagnets)
@@ -76,19 +113,27 @@ function run(shows) {
           reject();
         });
     });
-    // Add current promise to the List
+    // add current promise to the List
     promises.push(p);
   });
-  // Return all Promises
+  // return all Promises
   return Promise.all(promises);
 }
 
+/**
+ * Set a delay before exiting the script
+ * to ensure that all the results were logged
+ *
+ * @private
+ */
 function exit() {
   setTimeout(() => process.exit(), 10000);
 }
 
-// ----------------------------------------------------- //
-
+/*!
+ * Get all TvShows from database
+ * and init chain of promises
+ */
 TvShow.find({})
   .then(run)
   .then(logResults)

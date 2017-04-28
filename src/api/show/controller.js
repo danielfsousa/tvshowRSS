@@ -1,3 +1,7 @@
+/*!
+ * Module dependencies.
+ */
+
 import omdb from '../../services/omdb';
 import TvShow from './model';
 import Feed from '../../services/rss';
@@ -6,11 +10,11 @@ import { errorHandler } from '../../util/error';
 import { logger } from '../../util/logger';
 import { rss as defaults } from '../../config';
 
-
 /**
- *  Set locals properties on the Request object
+ * Set locals properties on the Request object
  *
- * @param {Request} req
+ * @param {Object} req
+ * @private
  */
 function setRequestProperties(req) {
   const isImdbID = /tt\d{7}/.test(req.params.idOrName);
@@ -20,6 +24,14 @@ function setRequestProperties(req) {
   req.locals.resolution = req.params.resolution || req.query.resolution;
 }
 
+/**
+ * Send RSS Feed containing the show magnets
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {TvShow} show
+ * @private
+ */
 function sendFeed(req, res, show) {
   if (show.magnets.length === 0) {
     const error = new Error('No download links found');
@@ -33,6 +45,19 @@ function sendFeed(req, res, show) {
   res.send(xml);
 }
 
+/**
+ * Creates a new TvShow mongoose object.
+ * Fetch information data on omdb api.
+ * Populates the TvShow object with the data fecthed.
+ * Fetch download data on rarbg.
+ * Filters the download data by episode and resolution.
+ * Saves TvShow on database.
+ * Sends RSS feed.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {String} type
+ */
 function newTvShow(req, res, type) {
   const show = new TvShow({
     imdbID: req.locals.imdb,
@@ -57,13 +82,27 @@ function newTvShow(req, res, type) {
     .catch(errorHandler(req, res));
 }
 
+/**
+ * Get TVShow by IMDB ID
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @private
+ */
 function getById(req, res) {
   TvShow.findOne({ imdbID: req.locals.imdb })
         .then(show => (show ? sendFeed(req, res, show) : newTvShow(req, res, 'imdb')))
         .catch(errorHandler(req, res));
 }
 
-export function getByName(req, res) {
+/**
+ * Get TvShow by Name
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @private
+ */
+function getByName(req, res) {
   // removes leading/trailing whitespaces
   const name = req.locals.name.trim();
   // find the best result
@@ -72,14 +111,18 @@ export function getByName(req, res) {
         .catch(errorHandler(req, res));
 }
 
-/*
-*
-*   GET TV SHOW MAGNETS BY [NAME] OR [IMDBID]
-*
-*   /shows/:idOrName
-*   /shows/:idOrName/:resolution
-*
-*/
+/**
+ * GET TV SHOW MAGNETS BY [NAME] OR [IMDBID]
+ *
+ * /shows/:idOrName
+ * /shows/:idOrName/:resolution
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ * @public
+ * @export
+ */
 export default function getTvShowRSS(req, res, next) {
   setRequestProperties(req);
 

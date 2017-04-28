@@ -3,11 +3,11 @@ import winston from 'winston';
 import config from '../config';
 
 // Create the directory if it does not exist
-if (!fs.existsSync(config.logDir)) {
-  fs.mkdirSync(config.logDir);
+if (!fs.existsSync(config.logs.dir)) {
+  fs.mkdirSync(config.logs.dir);
 }
 
-export const logger = new winston.Logger(config.logDefault);
+export const logger = new winston.Logger(config.logs.defaults);
 
 export const stream = {
   write: (message) => {
@@ -15,4 +15,4 @@ export const stream = {
   },
 };
 
-export const cron = new winston.Logger(config.logCron);
+export const cron = new winston.Logger(config.logs.cron);

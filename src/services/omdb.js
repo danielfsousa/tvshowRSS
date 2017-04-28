@@ -1,6 +1,18 @@
+/**
+ * Module dependencies.
+ * @private
+ */
+
 import omdb from 'omdb';
 
-function get(type, show) {
+/**
+ * Get omdb data
+ *
+ * @param {string} [type='imdb']
+ * @param {TvShow} show
+ * @returns {Promise}
+ */
+function get(type = 'imdb', show) {
   const params = type === 'imdb'
     ? { imdb: show.imdbID }
     : { title: show.name, type: 'series' };
@@ -20,4 +32,5 @@ function get(type, show) {
   });
 }
 
+// Exports module
 export default { get };

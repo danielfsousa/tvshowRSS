@@ -1,20 +1,39 @@
+/**
+ * Module dependencies.
+ * @private
+ */
+
 import { padStart, includes } from 'lodash';
 import RSS from 'rss';
 import { rss as defaults } from '../config';
 import { logger } from '../util/logger';
 
+/**
+ * Available resolutions constants.
+ * @public
+ * @export
+ */
 export const resolutions = {
   SD: 'sd',
   HD: '720p',
   FULLHD: '1080p',
 };
 
+/**
+ * Represents a RSS Feed for a TvShow
+ *
+ * @class Feed
+ * @public
+ * @export
+ */
 export default class Feed {
 
-  static get resolutions() {
-    return resolutions;
-  }
-
+  /**
+   * Creates an instance of Feed
+   *
+   * @param {TvShow} tvShow
+   * @memberOf Feed
+   */
   constructor(tvShow) {
     const fmtSeason = `Season: ${padStart(tvShow.current_season, 2, 0)}`;
     this.tvShow = tvShow;
@@ -26,6 +45,14 @@ export default class Feed {
     };
   }
 
+  /**
+   * Generates XML and returns as a string for this feed.
+   *
+   * @param {string} videoResolution
+   * @returns {string}
+   *
+   * @memberOf Feed
+   */
   create(videoResolution) {
     let res = '';
 
@@ -58,5 +85,4 @@ export default class Feed {
 
     return rss;
   }
-
 }

@@ -1,10 +1,23 @@
+/**
+ * Module dependencies.
+ * @private
+ */
+
 import { logger } from './logger';
 
-// handle errors
+/**
+ * Handle errors
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {Function} to use in a promises chain
+ * @public
+ * @export
+ */
 export function errorHandler(req, res) {
   return (err) => {
+    // Return if there is no error
     if (!err) return;
-    // Log error
 
     res.locals.message = err.message ||
       (err.error === 'No results found' ? 'No download links found' : '');
@@ -25,7 +38,14 @@ export function errorHandler(req, res) {
   };
 }
 
-// route not found
+/**
+ * Last route. If no other route was matched
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @public
+ * @export
+ */
 export function badRequest(req, res) {
   const host = `${req.get('host')}/shows/`;
   const code = 400;

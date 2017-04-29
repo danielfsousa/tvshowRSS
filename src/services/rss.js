@@ -5,6 +5,7 @@
 
 import { padStart, includes } from 'lodash';
 import RSS from 'rss';
+import { parseString } from 'xml2js';
 import { rss as defaults } from '../config';
 import { logger } from '../util/logger';
 
@@ -35,8 +36,9 @@ export default class Feed {
    * @memberOf Feed
    */
   constructor(tvShow) {
-    const fmtSeason = `Season: ${padStart(tvShow.current_season, 2, 0)}`;
     this.tvShow = tvShow;
+
+    const fmtSeason = `Season: ${padStart(tvShow.current_season, 2, 0)}`;
     this.config = {
       title: `${defaults.title}: ${tvShow.name}`,
       description: `${defaults.description} ${tvShow.name}. ${fmtSeason}`,
@@ -84,5 +86,37 @@ export default class Feed {
     });
 
     return rss;
+  }
+
+  /**
+   * Parses RSS from a string and returns a Promise
+   *
+   * @param {string} str
+   * @returns {Promise}
+   */
+  static parse(str) {
+    return new Promise((resolve, reject) => {
+      parseString(str, (err, xml) => {
+        if (err) reject(err);
+
+        const feedObj = {
+          title: xml.rss.channel[0].title[0],
+          description: xml.rss.channel[0].description[0],
+          items: [],
+        };
+
+        xml.rss.channel[0].item.forEach((obj) => {
+          const newItem = Object.assign({}, obj);
+          newItem.enclosure = obj.enclosure[0].$;
+          newItem.title = obj.title[0];
+          newItem.description = obj.description[0];
+          newItem.guid = obj.guid[0]._;
+          newItem.pubDate = obj.pubDate[0];
+          feedObj.items.push(newItem);
+        });
+
+        resolve(feedObj);
+      });
+    });
   }
 }

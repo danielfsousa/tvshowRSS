@@ -1,5 +1,3 @@
-import app from './app';
-
 const development = {
   logs: { env: 'dev' },
   mongo: {
@@ -13,7 +11,7 @@ const development = {
 const test = {
   logs: { env: 'dev' },
   mongo: {
-    uri: 'mongodb://localhost/rss-tv-show-test',
+    uri: process.env.MONGODB_URI_TESTS,
     options: {
       debug: false,
     },
@@ -24,10 +22,10 @@ const production = {
   logs: { env: 'combined' },
   port: process.env.PORT || 8080,
   mongo: {
-    uri: process.env.MONGODB_URI || 'mongodb://localhost/rss-tv-shows',
+    uri: process.env.MONGODB_URI,
   },
 };
 
 // exports the current environment configurations
 const envs = { development, test, production };
-export default envs[app.env];
+export default envs[process.env.NODE_ENV];

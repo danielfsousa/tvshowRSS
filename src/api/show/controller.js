@@ -16,7 +16,7 @@ import { rss as defaults } from '../../config';
  * @param {Object} req
  * @private
  */
-function setRequestProperties(req) {
+function setRequestLocals(req) {
   const isImdbID = /tt\d{7}/.test(req.params.idOrName);
   req.locals = {};
   req.locals.imdb = isImdbID ? req.params.idOrName : null;
@@ -64,12 +64,12 @@ function newTvShow(req, res, type) {
     name: req.locals.name,
   });
 
-  function populate(response) {
+  const populate = (response) => {
     show.imdbID = response.imdb.id;
     show.name = response.title;
     show.current_season = response.totalSeasons;
     return Promise.resolve(show);
-  }
+  };
 
   omdb.get(type, show)
     .catch(errorHandler(req, res))
@@ -123,8 +123,8 @@ function getByName(req, res) {
  * @public
  * @export
  */
-export default function getTvShowRSS(req, res, next) {
-  setRequestProperties(req);
+export default function getRssRouteHandler(req, res, next) {
+  setRequestLocals(req);
 
   const imdb = req.locals.imdb;
   const name = req.locals.name;

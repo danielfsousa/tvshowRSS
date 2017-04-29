@@ -7,12 +7,18 @@ if (!fs.existsSync(config.logs.dir)) {
   fs.mkdirSync(config.logs.dir);
 }
 
-export const logger = new winston.Logger(config.logs.defaults);
+const logger = new winston.Logger(config.logs.defaults);
 
-export const stream = {
+if (process.env.NODE_ENV === 'test') {
+  logger.remove(winston.transports.Console);
+}
+
+const stream = {
   write: (message) => {
     logger.info(`REQUEST ${message}`);
   },
 };
 
-export const cron = new winston.Logger(config.logs.cron);
+const cron = new winston.Logger(config.logs.cron);
+
+export { logger, stream, cron };

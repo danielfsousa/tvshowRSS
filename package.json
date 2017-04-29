@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "npm run build && pm2 start ./bin/www",
+    "test": "(set NODE_ENV=test) & (mocha --timeout 120000 --require babel-register src/**/*.test.js)",
     "prod": "npm run build && node ./bin/www",
     "dev": "nodemon --exec babel-node ./bin/www",
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts || exit 0 || true",
@@ -34,18 +35,24 @@
     "pm2": "^2.4.5",
     "rarbg": "^0.4.4",
     "rss": "^1.2.2",
-    "winston": "^2.3.1"
+    "winston": "^2.3.1",
+    "xml2js": "^0.4.17"
   },
   "devDependencies": {
     "babel-eslint": "*",
+    "chai": "3.x",
+    "chai-http": "3.x",
+    "chai-string": "^1.3.0",
     "eslint": "^3.19.0",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.9.0",
+    "mocha": "3.x",
+    "mockgoose": "7.x",
     "nodemon": "^1.11.0"
   },
   "engines": {
-    "node": "7.6.0"
+    "node": "7.x"
   }
 }

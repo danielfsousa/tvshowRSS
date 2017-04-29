@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import getTvShowRSS from './controller';
+import getRssRouteHandler from './controller';
 
 const router = new Router();
 
-router.get('/:idOrName', getTvShowRSS);
-router.get('/:idOrName/:resolution', getTvShowRSS);
+router.get('/:idOrName', getRssRouteHandler);
+router.get('/:idOrName/:resolution', getRssRouteHandler);
 
 export default router;

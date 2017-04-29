@@ -39,7 +39,7 @@ export default {
           timestamp,
         }),
         new winston.transports.Console({
-          level: 'debug',
+          level: process.env.NODE_ENV === 'test' ? 'error' : 'debug',
           handleExceptions: true,
           json: false,
           colorize: true,
@@ -61,7 +61,7 @@ export default {
           timestamp,
         }),
         new winston.transports.Console({
-          level: 'debug',
+          level: process.env.NODE_ENV === 'test' ? 'error' : 'debug',
           handleExceptions: true,
           json: false,
           colorize: true,

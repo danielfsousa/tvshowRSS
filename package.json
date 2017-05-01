@@ -4,7 +4,11 @@
   "private": true,
   "scripts": {
     "start": "npm run build && pm2 start ./bin/www",
-    "test": "(set NODE_ENV=test) & (mocha --timeout 120000 --require babel-register src/**/*.test.js)",
+    "test": "(set NODE_ENV=test) & mocha --timeout 120000 --require babel-register src/**/*.test.js",
+    "test:unit": "(set NODE_ENV=test) & mocha --require babel-register src/**/!(index).test.js",
+    "test:integration": "(set NODE_ENV=test) & mocha --timeout 120000 --require babel-register src/**/index.test.js",
+    "coverage": "(set NODE_ENV=test) & nyc --reporter=lcov --require babel-core/register mocha --timeout 120000 src/**/!(index).test.js",
+    "postcoverage": "(\"coverage/lcov-report/index.html\")",
     "prod": "npm run build && node ./bin/www",
     "dev": "nodemon --exec babel-node ./bin/www",
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts || exit 0 || true",
@@ -48,9 +52,12 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.9.0",
+    "istanbul": "^0.4.5",
     "mocha": "3.x",
     "mockgoose": "7.x",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "nyc": "^10.3.0",
+    "sinon": "^2.1.0"
   },
   "engines": {
     "node": "7.x"

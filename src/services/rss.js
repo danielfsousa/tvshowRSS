@@ -48,6 +48,36 @@ export default class Feed {
   }
 
   /**
+   * Check if provided resolution is a valid resolution,
+   * if not, returns 720p as default
+   *
+   * @param {string} videoResolution
+   * @returns {string}
+   * @static
+   * @private
+   * @memberOf Feed
+   */
+  static validateResolution(videoResolution) {
+    let outputResolution;
+    const lowerCaseResolution = typeof videoResolution === 'string' ? videoResolution.toLowerCase() : videoResolution;
+
+    // Check if resolution requested by the user is valid
+    if (includes(resolutions, lowerCaseResolution)) {
+      logger.debug(`REQUESTED RESOLUTION: ${lowerCaseResolution}`);
+      // Add an underscore if resolution beggins with a number
+      outputResolution = lowerCaseResolution.includes('p')
+        ? `_${lowerCaseResolution}`
+        : lowerCaseResolution;
+    } else {
+      logger.debug(`RESOLUTION ID NOT SET OR NOR VALID. DEFAULT: ${defaults.resolution}`);
+      // Add default resolution
+      outputResolution = `_${defaults.resolution}`;
+    }
+
+    return outputResolution;
+  }
+
+  /**
    * Generates XML and returns as a string for this feed.
    *
    * @param {string} videoResolution
@@ -56,28 +86,16 @@ export default class Feed {
    * @memberOf Feed
    */
   create(videoResolution) {
-    let res = '';
-
-    // Check if resolution requested by the user is valid
-    if (includes(resolutions, videoResolution)) {
-      logger.debug(`REQUESTED RESOLUTION: ${videoResolution}`);
-      // Add an underscore if resolution beggins with a number
-      res = videoResolution.includes('p') ? `_${videoResolution}` : videoResolution;
-    } else {
-      logger.debug(`RESOLUTION ID NOT SET OR NOR VALID. DEFAULT: ${defaults.resolution}`);
-      // Add default resolution
-      res = `_${defaults.resolution}`;
-    }
+    const resolution = Feed.validateResolution(videoResolution);
 
     const rss = new RSS(this.config);
-    const tvShow = this.tvShow;
 
-    tvShow.magnets.forEach((magnet) => {
+    this.tvShow.magnets.forEach((magnet) => {
       rss.item({
-        title: magnet[res].title,
-        description: `Download ${magnet[res].title}`,
+        title: magnet[resolution].title,
+        description: `Download ${magnet[resolution].title}`,
         enclosure: {
-          url: magnet[res].link,
+          url: magnet[resolution].link,
           length: 0,
           type: 'application/x-bittorrent',
         },
@@ -91,13 +109,16 @@ export default class Feed {
   /**
    * Parses RSS from a string and returns a Promise
    *
-   * @param {string} str
-   * @returns {Promise}
+   * @static
+   * @param {any} str
+   * @returns
+   *
+   * @memberOf Feed
    */
   static parse(str) {
     return new Promise((resolve, reject) => {
       parseString(str, (err, xml) => {
-        if (err) reject(err);
+        if (err) reject(new Error('Invalid rss'));
 
         const feedObj = {
           title: xml.rss.channel[0].title[0],

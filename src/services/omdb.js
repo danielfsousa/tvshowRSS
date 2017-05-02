@@ -13,11 +13,18 @@ import omdb from 'omdb';
  * @returns {Promise}
  */
 function get(type = 'imdb', show) {
-  const params = type === 'imdb'
-    ? { imdb: show.imdbID }
-    : { title: show.name, type: 'series' };
-
   return new Promise((resolve, reject) => {
+    if (!show) reject('Parameter show was not passed');
+
+    let params;
+    if (type === 'imdb') {
+      params = { imdb: show.imdbID };
+    } else if (type === 'name') {
+      params = { title: show.name, type: 'series' };
+    } else {
+      reject(new Error('type must be "imdb" or "name"'));
+    }
+
     omdb.get(params, (err, response) => {
       if (err) {
         reject(err);

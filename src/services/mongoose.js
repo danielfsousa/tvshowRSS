@@ -8,10 +8,6 @@ Object.keys(config.mongo.options).forEach((key) => {
 
 mongoose.Promise = Promise;
 
-mongoose.Types.ObjectId.prototype.view = function view() {
-  return { id: this.toString() };
-};
-
 mongoose.connection.on('error', (err) => {
   logger.error(`MongoDB connection error: ${err}`);
   process.exit(-1);

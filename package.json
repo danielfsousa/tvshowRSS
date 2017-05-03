@@ -5,7 +5,7 @@
   "scripts": {
     "start": "npm run build && pm2 start ./bin/www",
     "test": "(set NODE_ENV=test) & mocha --timeout 120000 --require babel-register src/**/*.test.js",
-    "test:unit": "(set NODE_ENV=test) & mocha --timeout 120000 --require babel-register \"src/**/!(index).test.js\" || exit 0",
+    "test:unit": "(set NODE_ENV=test) & mocha --timeout 10000 --require babel-register \"src/**/!(index).test.js\" || exit 0",
     "test:integration": "(set NODE_ENV=test) & mocha --timeout 120000 --require babel-register src/**/index.test.js",
     "coverage": "(set NODE_ENV=test) & nyc --reporter=lcov --require babel-core/register mocha --timeout 120000 \"src/**/!(index).test.js\" || exit 0",
     "postcoverage": "(\"coverage/lcov-report/index.html\")",

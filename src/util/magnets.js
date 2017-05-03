@@ -11,6 +11,12 @@ import { logger } from './logger';
 /**
  * Filter RARBG data by Episode and Resolution
  *
+ * Returns: [{
+ *              sd: { tile: 'abc', link: 'magnet:?xt=urn:btih...' },
+ *              _720p: { tile: 'abc', link: 'magnet:?xt=urn:btih...' },
+ *              _1080p: { tile: 'abc', link: 'magnet:?xt=urn:btih...' },
+ *          }]
+ *
  * @public
  * @export
  * @param {Array} rarbgData
@@ -99,7 +105,14 @@ export function filter(rarbgData) {
  * @returns {Promise}
  */
 export function magnets(show, previousSeasons = 0) {
-  const season = show.current_season - previousSeasons;
+  if (typeof previousSeasons !== 'number') {
+    return Promise.reject(new Error('Parameter "previousSeasons" is not a number'));
+  }
+  if (!show) {
+    return Promise.reject(new Error('Parameter "show" is obrigatory'));
+  }
+
+  const season = (show.current_season || 1) - previousSeasons;
   const fmtSeason = `S${padStart(season, 2, 0)}`;
 
   const options = {
@@ -108,7 +121,7 @@ export function magnets(show, previousSeasons = 0) {
     limit: 100,
   };
 
-  if (show.imdb) {
+  if (show.imdbID) {
     options.search_imdb = show.imdbID;
     options.search_string = fmtSeason;
   }
@@ -151,6 +164,10 @@ export function retry(show) {
  */
 export function save(show) {
   return (filteredMagnets) => {
+    if (!(show instanceof TvShow)) {
+      return Promise.reject(new Error('Parameter show is not a TvShow instance'));
+    }
+
     const updated = show;
     // Empties array
     updated.magnets = [];

@@ -3,7 +3,7 @@ import path from 'path';
 import winston from 'winston';
 
 // Logs Directory
-const dir = path.join(__dirname, '../logs');
+const dir = path.join(__dirname, '../../logs');
 
 // Date timestamp
 function timestamp() {

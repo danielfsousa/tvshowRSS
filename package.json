@@ -3,7 +3,7 @@
   "version": "2.1.3",
   "private": true,
   "scripts": {
-    "start": "npm run build && pm2 start ./bin/www",
+    "start": "npm run build && pm2 start ./bin/www --watch",
     "test": "(set NODE_ENV=test) & mocha --timeout 120000 --require babel-register src/**/*.test.js",
     "test:unit": "(set NODE_ENV=test) & mocha --timeout 10000 --require babel-register \"src/**/!(index).test.js\" || exit 0",
     "test:integration": "(set NODE_ENV=test) & mocha --timeout 120000 --require babel-register src/**/index.test.js",

@@ -139,8 +139,8 @@ export function magnets(show, previousSeasons = 0) {
  * @returns {Promise} of {@link magnets}
  */
 export function retry(show) {
-  logger.info(`MAGNETS NOT FOUND: ${show.name}. TRYING AGAIN...`);
   return function tryAgain() {
+    logger.info(`MAGNETS NOT FOUND: ${show.name}. TRYING AGAIN...`);
     if (!(show.imdbID && show.name)) {
       const error = new Error('Tv show not found');
       error.status = 404;

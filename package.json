@@ -31,7 +31,7 @@
     "dotenv-safe": "^4.0.3",
     "express": "~4.15.2",
     "lodash": "^4.17.4",
-    "moment": "^2.18.1",
+    "moment-timezone": "^0.5.13",
     "mongoose": "^4.9.5",
     "morgan": "~1.8.1",
     "moviedb": "^0.2.8",

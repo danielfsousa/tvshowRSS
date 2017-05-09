@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import path from 'path';
 import winston from 'winston';
 
@@ -7,7 +7,7 @@ const dir = path.join(__dirname, '../../logs');
 
 // Date timestamp
 function timestamp() {
-  return moment().locale('pt-br').format('DD/MM/YYYY HH:mm:ss [(Brasília)]');
+  return moment().tz('America/Sao_Paulo').format('DD/MM/YYYY HH:mm:ss [(Brasília)]');
 }
 
 // exports logs config

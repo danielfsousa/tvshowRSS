@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import config from '../config';
 import { logger } from '../util/logger';
+import config from '../config';
 
 Object.keys(config.mongo.options).forEach((key) => {
   mongoose.set(key, config.mongo.options[key]);

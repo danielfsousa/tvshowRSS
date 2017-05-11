@@ -15,7 +15,7 @@ addons:
   - 104.236.18.111
 before_script: echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 before_deploy:
-- echo "$DEPLOY_KEY" > /tmp/deploy_rsa
+- echo -e "$DEPLOY_KEY" > /tmp/deploy_rsa
 - eval "$(ssh-agent -s)"
 - chmod 600 /tmp/deploy_rsa
 - ssh-add /tmp/deploy_rsa

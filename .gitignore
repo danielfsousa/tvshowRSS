@@ -13,4 +13,4 @@ npm-debug.log
 coverage
 cassettes
 _test.js
-deploy_key.pem
+deploy_rsa

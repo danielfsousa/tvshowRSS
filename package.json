@@ -16,7 +16,7 @@
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts || exit 0 || true",
     "cron": "babel-node ./src/cron.js",
     "build": "babel src -d dist",
-    "deploy": "git push digitalocean master",
+    "deploy": "git push -f digitalocean master",
     "v:major": "npm version major && git push --tags",
     "v:minor": "npm version minor && git push --tags",
     "v:patch": "npm version patch && git push --tags",

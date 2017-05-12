@@ -8,7 +8,7 @@
     "test": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --timeout 120000 dist/**/*.test.js",
     "test:unit": "cross-env NODE_ENV=test mocha --timeout 10000 --require babel-register \"src/**/!(index).test.js\" || exit 0",
     "pretest:integration": "yarn build",
-    "test:integration": "cross-env NODE_ENV=test mocha --timeout 120000 src/**/index.test.js",
+    "test:integration": "cross-env NODE_ENV=test mocha --timeout 120000 dist/**/index.test.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "coverage:show": "(\"coverage/lcov-report/index.html\")",
     "prod": "yarn build && node ./bin/www",

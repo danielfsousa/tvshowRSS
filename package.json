@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "babel-cli": "*",
+    "babel-preset-env": "^1.4.0",
     "body-parser": "~1.17.1",
     "compression": "^1.6.2",
     "cross-env": "^4.0.0",
@@ -46,7 +47,6 @@
   },
   "devDependencies": {
     "babel-eslint": "*",
-    "babel-preset-env": "^1.4.0",
     "chai": "3.x",
     "chai-as-promised": "^6.0.0",
     "chai-http": "3.x",

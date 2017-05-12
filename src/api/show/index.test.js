@@ -28,7 +28,7 @@ describe('Show Routes', () => {
         .then((feed) => {
           expect(feed).to.have.a.property('title').equals('TvShowRSS: Fargo');
           expect(feed).to.have.a.property('items').that.is.an('array');
-          expect(feed.items[0].title).to.contain('720p');
+          expect(feed.items[0].title).to.match(/720p/i);
           expect(feed.items[0].enclosure).to.have.a.property('url').that.startsWith('magnet:?');
           expect(feed.items[0].enclosure).to.have.a.property('type').equals('application/x-bittorrent');
         });
@@ -73,7 +73,7 @@ describe('Show Routes', () => {
         .then((feed) => {
           expect(feed).to.have.a.property('title').equals('TvShowRSS: Fargo');
           expect(feed).to.have.a.property('items').that.is.an('array');
-          expect(feed.items[0].title).to.contain('1080p');
+          expect(feed.items[0].title).to.match(/1080p/i);
           expect(feed.items[0].enclosure).to.have.a.property('url').that.startsWith('magnet:?');
           expect(feed.items[0].enclosure).to.have.a.property('type').equals('application/x-bittorrent');
         });
@@ -90,7 +90,7 @@ describe('Show Routes', () => {
         .then((feed) => {
           expect(feed).to.have.a.property('title').equals('TvShowRSS: Fargo');
           expect(feed).to.have.a.property('items').that.is.an('array');
-          expect(feed.items[0].title).to.contain('720p');
+          expect(feed.items[0].title).to.match(/720p/i);
           expect(feed.items[0].enclosure).to.have.a.property('url').that.startsWith('magnet:?');
           expect(feed.items[0].enclosure).to.have.a.property('type').equals('application/x-bittorrent');
         });
@@ -125,7 +125,7 @@ describe('Show Routes', () => {
         .then((feed) => {
           expect(feed).to.have.a.property('title').equals('TvShowRSS: Fargo');
           expect(feed).to.have.a.property('items').that.is.an('array');
-          expect(feed.items[0].title).to.contain('720p');
+          expect(feed.items[0].title).to.match(/720p/i);
           expect(feed.items[0].enclosure).to.have.a.property('url').that.startsWith('magnet:?');
           expect(feed.items[0].enclosure).to.have.a.property('type').equals('application/x-bittorrent');
         });
@@ -144,7 +144,7 @@ describe('Show Routes', () => {
         .then((feed) => {
           expect(feed).to.have.a.property('title').equals('TvShowRSS: Fargo');
           expect(feed).to.have.a.property('items').that.is.an('array');
-          expect(feed.items[0].title).to.contain('1080p');
+          expect(feed.items[0].title).to.match(/1080p/i);
           expect(feed.items[0].enclosure).to.have.a.property('url').that.startsWith('magnet:?');
           expect(feed.items[0].enclosure).to.have.a.property('type').equals('application/x-bittorrent');
         });
@@ -161,7 +161,7 @@ describe('Show Routes', () => {
         .then((feed) => {
           expect(feed).to.have.a.property('title').equals('TvShowRSS: Fargo');
           expect(feed).to.have.a.property('items').that.is.an('array');
-          expect(feed.items[0].title).to.contain('720p');
+          expect(feed.items[0].title).to.match(/720p/i);
           expect(feed.items[0].enclosure).to.have.a.property('url').that.startsWith('magnet:?');
           expect(feed.items[0].enclosure).to.have.a.property('type').equals('application/x-bittorrent');
         });
@@ -196,7 +196,7 @@ describe('Show Routes', () => {
         .then((feed) => {
           expect(feed).to.have.a.property('title').equals('TvShowRSS: Fargo');
           expect(feed).to.have.a.property('items').that.is.an('array');
-          expect(feed.items[0].title).to.contain('720p');
+          expect(feed.items[0].title).to.match(/720p/i);
           expect(feed.items[0].enclosure).to.have.a.property('url').that.startsWith('magnet:?');
           expect(feed.items[0].enclosure).to.have.a.property('type').equals('application/x-bittorrent');
         });
@@ -215,7 +215,7 @@ describe('Show Routes', () => {
         .then((feed) => {
           expect(feed).to.have.a.property('title').equals('TvShowRSS: Fargo');
           expect(feed).to.have.a.property('items').that.is.an('array');
-          expect(feed.items[0].title).to.contain('720p');
+          expect(feed.items[0].title).to.match(/720p/i);
           expect(feed.items[0].enclosure).to.have.a.property('url').that.startsWith('magnet:?');
           expect(feed.items[0].enclosure).to.have.a.property('type').equals('application/x-bittorrent');
         });
@@ -245,7 +245,7 @@ describe('Show Routes', () => {
         .then((feed) => {
           expect(feed).to.have.a.property('title').equals('TvShowRSS: Mr. Robot');
           expect(feed).to.have.a.property('items').that.is.an('array');
-          expect(feed.items[0].title).to.contain('720p');
+          expect(feed.items[0].title).to.match(/720p/i);
           expect(feed.items[0].enclosure).to.have.a.property('url').that.startsWith('magnet:?');
           expect(feed.items[0].enclosure).to.have.a.property('type').equals('application/x-bittorrent');
         });
@@ -262,7 +262,7 @@ describe('Show Routes', () => {
         .then((feed) => {
           expect(feed).to.have.a.property('title').equals('TvShowRSS: Mr. Robot');
           expect(feed).to.have.a.property('items').that.is.an('array');
-          expect(feed.items[0].title).to.contain('720p');
+          expect(feed.items[0].title).to.match(/720p/i);
           expect(feed.items[0].enclosure).to.have.a.property('url').that.startsWith('magnet:?');
           expect(feed.items[0].enclosure).to.have.a.property('type').equals('application/x-bittorrent');
         });

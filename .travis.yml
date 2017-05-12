@@ -22,5 +22,6 @@ deploy:
 - provider: script
   skip_cleanup: true
   script: yarn deploy
-  on:
-    branch: master
+after_success: 
+- yarn test:integration
+- yarn coverage

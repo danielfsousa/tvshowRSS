@@ -12,6 +12,9 @@ addons:
   ssh_known_hosts:
   - 104.236.18.111
 before_script: echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+script:
+- yarn test
+- yarn test:integration
 before_deploy:
 - echo -e "$DEPLOY_KEY" > /tmp/deploy_rsa
 - eval "$(ssh-agent -s)"
@@ -22,6 +25,4 @@ deploy:
 - provider: script
   skip_cleanup: true
   script: yarn deploy
-after_success: 
-- yarn test:integration
-- yarn coverage
+after_success: yarn coverage

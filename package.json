@@ -57,7 +57,7 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^5.0.1",
     "eslint-plugin-react": "^7.0.0",
-    "mocha": "3.x",
+    "mocha": "^3.4.1",
     "mockgoose": "7.x",
     "nodemon": "^1.11.0",
     "nyc": "^10.3.0",

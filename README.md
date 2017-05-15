@@ -23,7 +23,7 @@ http://api.tvshowrss.tk/shows/[NAME]/[RESOLUTION]
 
 ## Example
 ```
-http://api.tvshowrss.tk/shows/game%20of%20thrones/1080p
+http://api.tvshowrss.tk/shows/fargo/1080p
 ```
 
 ## Resolutions

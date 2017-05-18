@@ -30,7 +30,7 @@
     "body-parser": "~1.17.1",
     "compression": "^1.6.2",
     "cross-env": "^5.0.0",
-    "debug": "~2.6.3",
+    "debug": "~2.6.8",
     "dotenv-safe": "^4.0.3",
     "express": "~4.15.2",
     "lodash": "^4.17.4",

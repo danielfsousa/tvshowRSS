@@ -35,7 +35,7 @@
     "express": "~4.15.2",
     "lodash": "^4.17.4",
     "moment-timezone": "^0.5.13",
-    "mongoose": "^4.9.5",
+    "mongoose": "^4.10.0",
     "morgan": "~1.8.1",
     "moviedb": "^0.2.8",
     "omdb": "^0.8.0",

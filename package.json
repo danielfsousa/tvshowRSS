@@ -27,7 +27,7 @@
   "dependencies": {
     "babel-cli": "*",
     "babel-preset-env": "^1.4.0",
-    "body-parser": "~1.17.1",
+    "body-parser": "~1.17.2",
     "compression": "^1.6.2",
     "cross-env": "^5.0.0",
     "debug": "~2.6.3",

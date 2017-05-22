@@ -84,7 +84,10 @@ function updateSeason(show) {
       show.current_season = response.totalSeasons;
       resolve(show);
     })
-    .catch(reject);
+    .catch((e) => {
+      logger.error('OMDB Error: ', e);
+      resolve(show);
+    });
   });
 }
 

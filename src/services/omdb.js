@@ -4,6 +4,7 @@
  */
 
 import omdb from 'omdb';
+import { logger } from '../util/logger';
 
 /**
  * Get omdb data
@@ -25,11 +26,14 @@ function get(type = 'imdb', show) {
       reject(new Error('type must be "imdb" or "name"'));
     }
 
+    logger.debug('OMDB parameters: ', params);
+
     omdb.get(params, (err, response) => {
       if (err) {
         reject(err);
       }
       if (!response) {
+        logger.error('No response from OMDB. Parameters: ', params);
         const error = new Error('Tv show not found');
         error.status = 404;
         reject(error);

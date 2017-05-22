@@ -126,6 +126,8 @@ export function magnets(show, previousSeasons = 0) {
     options.search_string = fmtSeason;
   }
 
+  logger.debug('RARBG Search Options:', show.name, options);
+
   return rarbg.search(options);
 }
 

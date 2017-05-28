@@ -1,6 +1,6 @@
 {
   "name": "tv-show-rss-api",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "private": true,
   "scripts": {
     "start": "cross-env NODE_ENV=production pm2 start ./bin/www",

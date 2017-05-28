@@ -9,7 +9,7 @@ const http = require('http');
 const debug = debugModule('restful-web-api-design:server');
 const path = require('path');
 
-const dir = process.env.NODE_ENV === 'development' ? '../src' : '../dist';
+const dir = (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') ? '../dist' : '../src';
 
 const nodeEnv = require(path.join(dir, 'util/env'));
 const app = require(path.join(dir, 'app'));

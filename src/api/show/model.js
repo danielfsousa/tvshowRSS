@@ -2,9 +2,13 @@ import { Schema } from 'mongoose';
 import mongoose from '../../services/mongoose';
 
 const showSchema = new Schema({
-  imdbID: {
+  tvmazeID: {
     type: String,
     required: true,
+    unique: true,
+  },
+  imdbID: {
+    type: String,
     unique: true,
   },
   name: {

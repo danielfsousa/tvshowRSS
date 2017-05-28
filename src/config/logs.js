@@ -40,7 +40,7 @@ export default {
         }),
         new winston.transports.Console({
           level: process.env.NODE_ENV === 'test' ? 'error' : 'debug',
-          handleExceptions: true,
+          handleExceptions: process.env.NODE_ENV !== 'test',
           json: false,
           colorize: true,
           prettyPrint: true,
@@ -62,7 +62,7 @@ export default {
         }),
         new winston.transports.Console({
           level: process.env.NODE_ENV === 'test' ? 'error' : 'debug',
-          handleExceptions: true,
+          handleExceptions: process.env.NODE_ENV !== 'test',
           json: false,
           colorize: true,
           prettyPrint: true,

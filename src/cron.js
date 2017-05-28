@@ -7,11 +7,11 @@
  */
 
 import os from 'os';
-import omdb from './services/omdb';
+import tvmaze from './services/tvmaze';
 import TvShow from './api/show/model';
 import mongoose from './services/mongoose';
 import config from './config';
-import { magnets, retry, filter, save } from './util/magnets';
+import { magnets, filter, save } from './util/magnets';
 import { cron as logger } from './util/logger';
 
 // Connect to database
@@ -42,6 +42,7 @@ function success(show) {
  * @private
  */
 function error(err, show) {
+  console.log(err);
   failed.push({
     name: show.name,
     message: err.message || err.error,
@@ -77,18 +78,9 @@ function getMagnets(show) {
   return magnets(show);
 }
 
-function updateSeason(show) {
-  return new Promise((resolve, reject) => {
-    omdb.get('imdb', show)
-    .then((response) => {
-      show.current_season = response.totalSeasons;
-      resolve(show);
-    })
-    .catch((e) => {
-      logger.error('OMDB Error: ', e);
-      resolve(show);
-    });
-  });
+async function updateSeason(show) {
+  show.current_season = await tvmaze.getCurrentSeason(show);
+  return Promise.resolve(show);
 }
 
 /**
@@ -106,7 +98,6 @@ function run(shows) {
     const p = new Promise((resolve, reject) => {
       updateSeason(show)
         .then(getMagnets)
-        .catch(retry(show))
         .then(filter)
         .then(save(show))
         .then(success)

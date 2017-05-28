@@ -2,10 +2,10 @@
  * Module dependencies.
  */
 
-import omdb from '../../services/omdb';
+import tvmaze from '../../services/tvmaze';
 import TvShow from './model';
 import Feed from '../../services/rss';
-import { magnets, retry, filter, save } from '../../util/magnets';
+import { magnets, filter, save } from '../../util/magnets';
 import { errorHandler } from '../../util/error';
 import { logger } from '../../util/logger';
 import { rss as defaults } from '../../config';
@@ -47,7 +47,7 @@ function sendFeed(req, res, show) {
 
 /**
  * Creates a new TvShow mongoose object.
- * Fetch information data on omdb api.
+ * Fetch information data on tvmaze api.
  * Populates the TvShow object with the data fecthed.
  * Fetch download data on rarbg.
  * Filters the download data by episode and resolution.
@@ -65,17 +65,17 @@ function newTvShow(req, res, type) {
   });
 
   const populate = (response) => {
-    show.imdbID = response.imdb.id;
-    show.name = response.title;
-    show.current_season = response.totalSeasons;
+    show.tvmazeID = response.id;
+    show.imdbID = response.externals.imdb;
+    show.name = response.name;
+    show.current_season = response.current_season ? response.current_season : 1;
     return Promise.resolve(show);
   };
 
-  omdb.get(type, show)
+  tvmaze.get(type, show)
     .catch(errorHandler(req, res))
     .then(populate)
     .then(magnets)
-    .catch(retry(show))
     .then(filter)
     .then(save(show))
     .then(() => sendFeed(req, res, show))

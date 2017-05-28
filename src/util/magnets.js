@@ -104,57 +104,38 @@ export function filter(rarbgData) {
  * @param {number} [previousSeasons=0]
  * @returns {Promise}
  */
-export function magnets(show, previousSeasons = 0) {
-  if (typeof previousSeasons !== 'number') {
-    return Promise.reject(new Error('Parameter "previousSeasons" is not a number'));
-  }
-  if (!show) {
-    return Promise.reject(new Error('Parameter "show" is obrigatory'));
-  }
-
-  const season = (show.current_season || 1) - previousSeasons;
-  const fmtSeason = `S${padStart(season, 2, 0)}`;
-
-  const options = {
-    search_string: `${show.name} ${fmtSeason}`,
-    sort: 'seeders',
-    limit: 100,
-  };
-
-  if (show.imdbID) {
-    options.search_imdb = show.imdbID;
-    options.search_string = fmtSeason;
-  }
-
-  logger.debug('RARBG Search Options:', show.name, options);
-
-  return rarbg.search(options);
-}
-
-/**
- * Subtracts 1 or 2 numbers from TvShow current season
- * and try to get magnets from RARBG again
- *
- * @public
- * @export
- * @param {TvShow} show
- * @returns {Promise} of {@link magnets}
- */
-export function retry(show) {
-  return function tryAgain() {
-    logger.info(`MAGNETS NOT FOUND: ${show.name}. TRYING AGAIN...`);
-    if (!(show.imdbID && show.name)) {
-      const error = new Error('Tv show not found');
-      error.status = 404;
-      return Promise.reject(error);
+export async function magnets(show, previousSeasons = 0) {
+  try {
+    if (typeof previousSeasons !== 'number') {
+      return Promise.reject(new Error('Parameter "previousSeasons" is not a number'));
     }
-    if (show.current_season <= 1) {
-      const error = new Error('No download links found');
-      error.status = 404;
-      return Promise.reject(error);
+    if (!show) {
+      return Promise.reject(new Error('Parameter "show" is obrigatory'));
     }
-    return magnets(show, 1).catch(() => magnets(show, 2));
-  };
+
+    const season = (show.current_season || 1) - previousSeasons;
+    const fmtSeason = `S${padStart(season, 2, 0)}`;
+
+    const options = {
+      search_string: `${show.name} ${fmtSeason}`,
+      sort: 'seeders',
+      limit: 100,
+    };
+
+    if (show.imdbID) {
+      options.search_imdb = show.imdbID;
+      options.search_string = fmtSeason;
+    }
+
+    logger.debug('RARBG Search Options:', show.name, options);
+
+    const response = await rarbg.search(options);
+    return Promise.resolve(response);
+  } catch (e) {
+    const error = new Error('No download links found');
+    error.status = 404;
+    return Promise.reject(error);
+  }
 }
 
 /**
@@ -177,12 +158,12 @@ export function save(show) {
     filteredMagnets.forEach(magnetObj => updated.magnets.push(magnetObj));
     // Try to update model
     return updated.save().catch(() => {
-      logger.warn(`${show.name} WAS FOUND ON DATABSE. UPDATING THE DOCUMENT...`);
+      logger.warn(`${show.name} WAS FOUND ON DATABASE. UPDATING THE DOCUMENT...`);
       // If a document with the same imdbID already exists
       // Get updated properties
       const updatedProps = pick(updated, ['current_season', 'magnets']);
       // Update that one
-      TvShow.update({ imdbID: show.imdbID }, updatedProps);
+      return TvShow.update({ imdbID: show.imdbID }, updatedProps);
     });
   };
 }

@@ -16,7 +16,7 @@ addons:
   - 104.236.18.111
 before_script: echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 script:
-- yarn build
+- yarn test
 - yarn test:integration
 before_deploy:
 - echo -e "$DEPLOY_KEY" > /tmp/deploy_rsa

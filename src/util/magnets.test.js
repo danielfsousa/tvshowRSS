@@ -166,41 +166,6 @@ describe('magnets.js', () => {
     });
   });
 
-  describe('retry()', () => {
-    it('should call magnets', (done) => {
-      const stub = sandbox.stub(rarbg, 'search').returnsPromise().resolves();
-
-      retry(tvShow)().then(() => {
-        expect(stub).to.be.calledOnce;
-        done();
-      }).catch(done);
-    });
-
-    it('should call magnets twice when magnets were not found on the first try', (done) => {
-      const stub = sandbox.stub(rarbg, 'search');
-      stub.onCall(0).returns(Promise.reject());
-      stub.onCall(1).returns(Promise.resolve());
-
-      retry(tvShow)().then(() => {
-        expect(stub).to.be.calledTwice;
-        done();
-      }).catch(done);
-    });
-
-    it('should reject when show have not a name and imdbid', () => {
-      const show = omit(tvShow, ['name', 'imdbID']);
-      return expect(retry(show)())
-        .to.be.rejectedWith('Tv show not found');
-    });
-
-    it('should reject when current season is 1 or less', () => {
-      tvShow.current_season = 1;
-
-      return expect(retry(tvShow)())
-        .to.be.rejectedWith('No download links found');
-    });
-  });
-
   describe('save()', () => {
     it('should update magnets array', (done) => {
       function checkMagnets() {

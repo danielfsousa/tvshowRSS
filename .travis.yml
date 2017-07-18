@@ -20,7 +20,7 @@ before_script:
 - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 - greenkeeper-lockfile-update
 script:
-- yarn test:integration
+- yarn build && yarn test:integration
 after_script: greenkeeper-lockfile-upload
 before_deploy:
 - echo -e "$DEPLOY_KEY" > /tmp/deploy_rsa

@@ -11,13 +11,17 @@ env:
 branches:
   only:
   - master
+  - /^greenkeeper/.*$/
 addons:
   ssh_known_hosts:
   - 104.236.18.111
-before_script: echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+before_install: yarn global add greenkeeper-lockfile@1
+before_script: 
+- echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+- greenkeeper-lockfile-update
 script:
-- yarn test
 - yarn test:integration
+after_script: greenkeeper-lockfile-upload
 before_deploy:
 - echo -e "$DEPLOY_KEY" > /tmp/deploy_rsa
 - eval "$(ssh-agent -s)"

@@ -1,7 +1,7 @@
-# tv-show-rss-api
+# tvshowRSS
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/danielfsousa/tv-show-rss-api.svg)](https://greenkeeper.io/)
-[![Build Status](https://travis-ci.org/danielfsousa/tv-show-rss-api.svg?branch=master)](https://travis-ci.org/danielfsousa/tv-show-rss-api) [![Coverage Status](https://coveralls.io/repos/github/danielfsousa/tv-show-rss-api/badge.svg?branch=master)](https://coveralls.io/github/danielfsousa/tv-show-rss-api?branch=master)
+[![Build Status](https://travis-ci.org/danielfsousa/tvshowRSS.svg?branch=master)](https://travis-ci.org/danielfsousa/tvshowRSS) [![Coverage Status](https://coveralls.io/repos/github/danielfsousa/tvshowRSS/badge.svg?branch=master)](https://coveralls.io/github/danielfsousa/tvshowRSS?branch=master)
 
 :tv: Track ongoing TV shows by subscribing to the generated RSS on your prefered torrent client
 

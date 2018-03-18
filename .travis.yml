@@ -22,14 +22,14 @@ before_script:
 script:
 - yarn build && yarn test:integration
 after_script: greenkeeper-lockfile-upload
-before_deploy:
-- echo -e "$DEPLOY_KEY" > /tmp/deploy_rsa
-- eval "$(ssh-agent -s)"
-- chmod 600 /tmp/deploy_rsa
-- ssh-add /tmp/deploy_rsa
-- git remote add digitalocean $DEPLOY_REPO
-deploy:
-- provider: script
-  skip_cleanup: true
-  script: yarn deploy
+# before_deploy:
+# - echo -e "$DEPLOY_KEY" > /tmp/deploy_rsa
+# - eval "$(ssh-agent -s)"
+# - chmod 600 /tmp/deploy_rsa
+# - ssh-add /tmp/deploy_rsa
+# - git remote add digitalocean $DEPLOY_REPO
+# deploy:
+# - provider: script
+#   skip_cleanup: true
+#   script: yarn deploy
 after_success: yarn coverage

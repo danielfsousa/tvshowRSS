@@ -39,7 +39,7 @@
     "morgan": "~1.8.1",
     "moviedb": "^0.2.8",
     "pm2": "^2.5.0",
-    "rarbg": "^0.4.4",
+    "rarbg": "^1.2.1",
     "request-promise-native": "^1.0.4",
     "rss": "^1.2.2",
     "tvmaze-node": "^1.0.4",

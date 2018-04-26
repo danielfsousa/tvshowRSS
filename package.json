@@ -65,6 +65,6 @@
     "sinon-stub-promise": "^4.0.0"
   },
   "engines": {
-    "node": "7.x"
+    "node": "10"
   }
 }

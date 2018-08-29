@@ -50,7 +50,7 @@
     "babel-eslint": "*",
     "chai": "^4.1.0",
     "chai-as-promised": "^7.0.0",
-    "chai-http": "3.x",
+    "chai-http": "^4.2.0",
     "chai-string": "^1.4.0",
     "coveralls": "^2.13.1",
     "eslint": "^3.19.0",

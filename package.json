@@ -38,7 +38,7 @@
     "mongoose": "^5.0.0",
     "morgan": "~1.8.1",
     "moviedb": "^0.2.8",
-    "pm2": "^2.5.0",
+    "pm2": "^3.5.1",
     "rarbg": "^0.4.4",
     "request-promise-native": "^1.0.4",
     "rss": "^1.2.2",

@@ -53,7 +53,7 @@
     "chai-http": "3.x",
     "chai-string": "^1.4.0",
     "coveralls": "^2.13.1",
-    "eslint": "^3.19.0",
+    "eslint": "^6.5.0",
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.2.0",
     "mocha": "3.x",

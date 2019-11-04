@@ -40,7 +40,7 @@
     "moviedb": "^0.2.8",
     "pm2": "^2.5.0",
     "rarbg": "^0.4.4",
-    "request-promise-native": "^1.0.4",
+    "request-promise-native": "^1.0.8",
     "rss": "^1.2.2",
     "tvmaze-node": "^1.0.4",
     "winston": "^2.3.1",
